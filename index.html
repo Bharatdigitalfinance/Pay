@@ -10,9 +10,9 @@
         :root {
             --primary-blue: #003399;
             --dark-blue: #002060;
-            --light-blue: #f4f6fa;
-            --bg-color: #f8fafc;
-            --text-main: #0f172a;
+            --light-blue: #f0f4ff;
+            --bg-color: #f4f6f9;
+            --text-main: #1e293b;
             --text-muted: #64748b;
             --success-green: #10b981;
             --warning-orange: #f59e0b;
@@ -44,165 +44,171 @@
             transform: scale(0.97) !important;
         }
 
-        .enterprise-header { background: var(--dark-blue); color: white; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 6px rgba(0,0,0,0.1); border-bottom: 2px solid #0052cc; }
-        .brand-box { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .brand-logo-svg { width: 32px; height: 32px; flex-shrink: 0; background: white; border-radius: 6px; padding: 3px; }
-        .brand-text h1 { font-size: 13.5px; font-weight: 800; letter-spacing: 0.3px; line-height: 1.1; }
-        .brand-text span { font-size: 8.5px; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px; display: block; }
-        .header-actions { display: flex; gap: 6px; align-items: center; }
-        .icon-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: white; padding: 5px 9px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; }
-        .verified-customer-badge { background: rgba(16, 185, 129, 0.2); border: 1px solid #34d399; color: #ecfdf5; padding: 3px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; }
+        .enterprise-header { background: var(--dark-blue); color: white; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 6px rgba(0,0,0,0.1); border-bottom: 2px solid #0052cc; }
+        .brand-box { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+        .brand-logo-icon { width: 30px; height: 30px; background: white; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #002060; font-size: 16px; }
+        .brand-text h1 { font-size: 12.5px; font-weight: 800; letter-spacing: 0.3px; line-height: 1.1; }
+        .brand-text span { font-size: 8px; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px; display: block; }
+        .header-actions { display: flex; gap: 5px; align-items: center; }
+        .icon-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: white; padding: 4px 8px; border-radius: 6px; font-size: 10.5px; font-weight: 600; cursor: pointer; }
+        .verified-customer-badge { background: rgba(16, 185, 129, 0.2); border: 1px solid #34d399; color: #ecfdf5; padding: 3px 7px; border-radius: 20px; font-size: 9.5px; font-weight: 700; }
 
         .db-status-bar { background: #0f172a; color: white; padding: 7px 14px; font-size: 11px; display: flex; align-items: center; justify-content: space-between; gap: 8px; border-bottom: 1px solid #334155; }
         .db-status-bar select { flex: 1; background: #1e293b; color: white; border: 1px solid #475569; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; outline: none; }
 
-        .screen { display: none; flex-direction: column; flex: 1; padding: 14px; overflow-y: auto; }
+        .bajaj-sub-nav { display: flex; background: white; border-bottom: 1px solid #e2e8f0; overflow-x: auto; white-space: nowrap; padding: 0 10px; scrollbar-width: none; }
+        .bajaj-sub-nav::-webkit-scrollbar { display: none; }
+        .bajaj-tab { padding: 10px 12px; font-size: 11.5px; font-weight: 700; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; }
+        .bajaj-tab.active { color: var(--primary-blue); border-bottom-color: var(--primary-blue); }
+
+        .screen { display: none; flex-direction: column; flex: 1; padding: 12px; overflow-y: auto; }
         .screen.active { display: flex; }
 
-        .card { background: #ffffff; padding: 14px; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); border: 1px solid var(--border-color); margin-bottom: 12px; }
+        .card { background: #ffffff; padding: 12px; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); border: 1px solid var(--border-color); margin-bottom: 10px; }
         .card.ocr-highlight { border: 2px solid var(--success-green); box-shadow: 0 0 12px rgba(16, 185, 129, 0.2); }
-        .card-title { font-size: 12.5px; font-weight: 800; color: var(--dark-blue); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px; }
+        .card-title { font-size: 12px; font-weight: 800; color: var(--dark-blue); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 5px; }
         
         .form-row { display: flex; gap: 8px; }
         .form-group { margin-bottom: 8px; flex: 1; }
-        .form-group label { display: block; font-size: 10px; font-weight: 700; color: var(--text-muted); margin-bottom: 3px; text-transform: uppercase; }
-        .form-control { width: 100%; padding: 7px 9px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 12px; outline: none; background: #f8fafc; color: var(--text-main); font-weight: 600; }
+        .form-group label { display: block; font-size: 9.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase; }
+        .form-control { width: 100%; padding: 6px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 11.5px; outline: none; background: #f8fafc; color: var(--text-main); font-weight: 600; }
         .form-control:focus { border-color: var(--primary-blue); background: #fff; box-shadow: 0 0 0 2px rgba(0, 51, 153, 0.1); }
 
-        .memory-list { display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto; margin-top: 6px; }
-        .memory-item { display: flex; align-items: center; justify-content: space-between; padding: 7px 9px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer; }
+        .memory-list { display: flex; flex-direction: column; gap: 5px; max-height: 160px; overflow-y: auto; margin-top: 5px; }
+        .memory-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer; }
         .memory-item.selected { border-color: var(--primary-blue); background: var(--light-blue); }
         .mem-left { display: flex; align-items: center; gap: 8px; flex: 1; }
-        .mem-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--primary-blue); }
-        .mem-info h4 { font-size: 11.5px; font-weight: 700; color: var(--text-main); }
-        .mem-info p { font-size: 10px; color: var(--text-muted); }
-        .mem-actions { display: flex; gap: 4px; }
-        .sm-btn { padding: 4px 8px; border-radius: 6px; border: none; font-size: 10px; font-weight: 700; cursor: pointer; }
+        .mem-info h4 { font-size: 11px; font-weight: 700; color: var(--text-main); }
+        .mem-info p { font-size: 9.5px; color: var(--text-muted); }
+        .mem-actions { display: flex; gap: 3px; }
+        .sm-btn { padding: 3px 7px; border-radius: 5px; border: none; font-size: 9.5px; font-weight: 700; cursor: pointer; }
         .sm-btn.load { background: var(--primary-blue); color: white; }
         .sm-btn.success { background: var(--success-green); color: white; }
         .sm-btn.del { background: #fee2e2; color: var(--danger-red); }
 
-        .ocr-box { border: 2px dashed var(--primary-blue); background: #f4f6fa; padding: 12px; border-radius: 8px; text-align: center; position: relative; cursor: pointer; margin-bottom: 6px; }
+        .ocr-box { border: 2px dashed var(--primary-blue); background: #f4f6fa; padding: 10px; border-radius: 8px; text-align: center; position: relative; cursor: pointer; margin-bottom: 6px; }
         .ocr-box input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-        .ocr-status { font-size: 11px; color: var(--dark-blue); font-weight: 600; margin-top: 4px; }
-        .progress-bar { width: 100%; height: 6px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin-top: 4px; display: none; }
+        .ocr-status { font-size: 10.5px; color: var(--dark-blue); font-weight: 600; margin-top: 3px; }
+        .progress-bar { width: 100%; height: 5px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin-top: 4px; display: none; }
         .progress-fill { height: 100%; background: var(--success-green); width: 0%; transition: 0.2s; }
 
-        .inst-add-bar { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; background: #f8fafc; padding: 6px; border-radius: 6px; border: 1px solid #e2e8f0; }
-        .inst-add-bar input { width: 55px; padding: 4px; font-size: 11.5px; text-align: center; font-weight: 700; border: 1px solid var(--border-color); border-radius: 5px; }
-        .inst-editor-header { display: grid; grid-template-columns: 24px 78px 64px 88px 1fr 24px; gap: 3px; font-size: 9px; font-weight: 800; color: var(--text-muted); padding: 0 2px 3px 2px; text-transform: uppercase; }
-        .inst-editor-row { display: grid; grid-template-columns: 24px 78px 64px 88px 1fr 24px; gap: 3px; align-items: center; margin-bottom: 4px; background: #f8fafc; padding: 4px; border-radius: 6px; border: 1px solid #e2e8f0; }
-        .inst-editor-row input, .inst-editor-row select { padding: 4px 3px; font-size: 10.5px; border: 1px solid var(--border-color); border-radius: 4px; width: 100%; font-weight: 600; }
-        .inst-num { font-size: 10.5px; font-weight: 800; text-align: center; color: var(--dark-blue); }
+        .inst-add-bar { display: flex; gap: 5px; align-items: center; margin-bottom: 5px; background: #f8fafc; padding: 5px; border-radius: 6px; border: 1px solid #e2e8f0; }
+        .inst-add-bar input { width: 50px; padding: 3px; font-size: 11px; text-align: center; font-weight: 700; border: 1px solid var(--border-color); border-radius: 4px; }
+        .inst-editor-header { display: grid; grid-template-columns: 22px 74px 60px 84px 1fr 22px; gap: 3px; font-size: 8.5px; font-weight: 800; color: var(--text-muted); padding: 0 2px 2px 2px; text-transform: uppercase; }
+        .inst-editor-row { display: grid; grid-template-columns: 22px 74px 60px 84px 1fr 22px; gap: 3px; align-items: center; margin-bottom: 3px; background: #f8fafc; padding: 3px; border-radius: 5px; border: 1px solid #e2e8f0; }
+        .inst-editor-row input, .inst-editor-row select { padding: 3px 2px; font-size: 10px; border: 1px solid var(--border-color); border-radius: 4px; width: 100%; font-weight: 600; }
+        .inst-num { font-size: 10px; font-weight: 800; text-align: center; color: var(--dark-blue); }
 
-        .top-banner { background: linear-gradient(135deg, #002060, #003399); color: white; padding: 16px 14px 24px 14px; border-radius: 0 0 16px 16px; margin: -14px -14px 0 -14px; position: relative; }
-        .banner-profile { display: flex; align-items: center; gap: 12px; }
-        .banner-avatar-wrap { position: relative; }
-        .banner-avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid white; background: #00153e; }
-        .upi-mini-tag { position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); background: white; color: #0f172a; font-size: 7.5px; font-weight: 800; padding: 1px 4px; border-radius: 3px; }
-        .banner-info h2 { font-size: 15px; font-weight: 700; letter-spacing: 0.2px; }
-        .banner-info p { font-size: 11.5px; opacity: 0.9; margin-top: 1px; }
-        .banner-info .loan-pill { display: inline-block; background: rgba(255,255,255,0.2); padding: 2px 7px; border-radius: 5px; font-size: 10px; margin-top: 3px; font-weight: 600; }
+        .bajaj-product-header { background: white; padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 10px; }
+        .product-top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .product-title { font-size: 14px; font-weight: 800; color: var(--dark-blue); }
+        .status-pill-active { background: #dcfce7; color: #15803d; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
+        .loan-ac-text { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
 
-        .floating-summary-card { background: white; border-radius: 12px; padding: 14px; margin-top: -16px; margin-bottom: 12px; box-shadow: 0 4px 14px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; position: relative; }
-        .active-pill { position: absolute; top: -10px; left: 14px; background: #dcfce7; color: #15803d; font-size: 10px; font-weight: 700; padding: 2px 9px; border-radius: 20px; border: 2px solid white; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .summary-grid { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
-        .sum-col p { font-size: 11px; color: var(--text-muted); font-weight: 500; }
-        .sum-col h3 { font-size: 18px; font-weight: 800; color: var(--text-main); margin-top: 2px; }
-        .sum-col.right { text-align: right; }
-        .address-bar { margin-top: 8px; padding-top: 6px; border-top: 1px dashed #e2e8f0; font-size: 10.5px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; }
+        .next-due-alert { background: #fffbeb; border: 1px solid #fde68a; padding: 8px 10px; border-radius: 6px; font-size: 11px; color: #92400e; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
 
-        .filter-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding: 0 2px; }
-        .filter-pill { background: #e0ebff; color: var(--dark-blue); padding: 4px 10px; border-radius: 16px; font-size: 11px; font-weight: 700; }
+        .loan-progress-container { margin: 8px 0; }
+        .loan-progress-bar { width: 100%; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; display: flex; }
+        .loan-progress-fill { background: var(--success-green); height: 100%; }
+        .loan-progress-labels { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--text-muted); margin-top: 4px; font-weight: 600; }
 
-        .installment-list { display: flex; flex-direction: column; gap: 7px; margin-bottom: 12px; }
-        .inst-item { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .loan-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; padding-top: 8px; border-top: 1px dashed #e2e8f0; font-size: 11px; }
+        .loan-meta-item p { color: var(--text-muted); font-size: 9.5px; text-transform: uppercase; }
+        .loan-meta-item h4 { font-size: 12.5px; font-weight: 700; color: var(--text-main); margin-top: 1px; }
+
+        .bajaj-accordion { background: white; border: 1px solid var(--border-color); border-radius: 10px; margin-bottom: 10px; overflow: hidden; }
+        .accordion-header { padding: 11px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 800; color: var(--dark-blue); cursor: pointer; background: #fff; }
+        .accordion-header:hover { background: #f8fafc; }
+        .accordion-content { padding: 0 14px 12px 14px; font-size: 11.5px; color: var(--text-muted); border-top: 1px solid #f1f5f9; display: none; line-height: 1.5; }
+        .accordion-content.open { display: block; padding-top: 10px; }
+
+        .quick-actions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
+        .quick-action-card { background: white; border: 1px solid var(--border-color); padding: 10px 6px; border-radius: 10px; text-align: center; cursor: pointer; }
+        .quick-action-card:hover { border-color: var(--primary-blue); background: var(--light-blue); }
+        .quick-action-icon { width: 32px; height: 32px; background: #e0ebff; color: var(--primary-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; margin: 0 auto 5px auto; }
+        .quick-action-card h5 { font-size: 10.5px; font-weight: 700; color: var(--text-main); line-height: 1.2; }
+
+        .installment-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+        .inst-item { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 9px; display: flex; justify-content: space-between; align-items: center; }
         .inst-item.bounce-highlight { border-color: #fde68a; background: #fffbeb; }
-        .inst-left { display: flex; align-items: center; gap: 10px; }
-        .inst-badge { width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0; }
+        .inst-left { display: flex; align-items: center; gap: 9px; }
+        .inst-badge { width: 30px; height: 30px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; flex-shrink: 0; }
         .inst-badge.paid { background: #dcfce7; color: #15803d; }
         .inst-badge.progress { background: #fef3c7; color: #b45309; }
         .inst-badge.scheduled { background: #f1f5f9; color: #64748b; }
         
-        .inst-details h4 { font-size: 12.5px; font-weight: 700; color: var(--text-main); }
-        .inst-details p { font-size: 10.5px; color: var(--text-muted); margin-top: 1px; }
+        .inst-details h4 { font-size: 12px; font-weight: 700; color: var(--text-main); }
+        .inst-details p { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
         .inst-right { text-align: right; }
-        .inst-right .amount { font-size: 13px; font-weight: 800; color: var(--text-main); }
-        .inst-right .utr { font-size: 9.5px; color: var(--text-muted); margin-top: 1px; font-family: monospace; }
-        .quick-pay-btn { margin-top: 3px; background: var(--primary-blue); color: white; border: none; padding: 3px 8px; border-radius: 5px; font-size: 9.5px; font-weight: 700; cursor: pointer; }
+        .inst-right .amount { font-size: 12.5px; font-weight: 800; color: var(--text-main); }
+        .inst-right .utr { font-size: 9px; color: var(--text-muted); margin-top: 1px; font-family: monospace; }
+        .quick-pay-btn { margin-top: 2px; background: var(--primary-blue); color: white; border: none; padding: 3px 7px; border-radius: 4px; font-size: 9px; font-weight: 700; cursor: pointer; }
 
-        .nbfc-notice-banner { background: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px; padding: 10px; margin-bottom: 12px; font-size: 11px; color: #9f1239; line-height: 1.4; }
-        .nbfc-notice-banner strong { display: block; font-size: 11.5px; margin-bottom: 2px; }
+        .nbfc-notice-banner { background: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px; padding: 9px; margin-bottom: 10px; font-size: 10.5px; color: #9f1239; line-height: 1.4; }
+        .nbfc-notice-banner strong { display: block; font-size: 11px; margin-bottom: 2px; }
 
-        .agreement-box { background: #f8fafc; border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 10.5px; text-align: left; }
-        .agreement-box label { display: flex; align-items: flex-start; gap: 7px; cursor: pointer; font-weight: 600; color: var(--text-main); }
-        .agreement-box input[type="checkbox"] { margin-top: 2px; width: 14px; height: 14px; accent-color: var(--primary-blue); }
+        .agreement-box { background: #f8fafc; border: 1px solid var(--border-color); padding: 9px; border-radius: 8px; margin-top: 8px; font-size: 10px; text-align: left; }
+        .agreement-box label { display: flex; align-items: flex-start; gap: 6px; cursor: pointer; font-weight: 600; color: var(--text-main); }
+        .agreement-box input[type="checkbox"] { margin-top: 2px; width: 13px; height: 13px; accent-color: var(--primary-blue); }
 
-        .due-Breakdown-table { width: 100%; border-collapse: collapse; font-size: 11.5px; margin-top: 4px; }
-        .due-Breakdown-table td { padding: 5px 3px; border-bottom: 1px solid #f1f5f9; }
+        .due-Breakdown-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 4px; }
+        .due-Breakdown-table td { padding: 4px 2px; border-bottom: 1px solid #f1f5f9; }
         .due-Breakdown-table td:last-child { text-align: right; font-weight: 700; }
 
-        .fine-choice-box { background: #fffbeb; border: 1px solid #fde68a; padding: 10px; border-radius: 8px; margin-top: 10px; }
-        .fine-choice-title { font-size: 11px; font-weight: 800; color: #92400e; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
-        .fine-radio-group { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-        .fine-option-btn { padding: 8px 6px; border-radius: 6px; border: 1px solid var(--border-color); background: white; font-size: 10.5px; font-weight: 700; cursor: pointer; text-align: center; color: var(--text-main); }
+        .fine-choice-box { background: #fffbeb; border: 1px solid #fde68a; padding: 9px; border-radius: 8px; margin-top: 8px; }
+        .fine-choice-title { font-size: 10.5px; font-weight: 800; color: #92400e; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+        .fine-radio-group { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+        .fine-option-btn { padding: 7px 5px; border-radius: 6px; border: 1px solid var(--border-color); background: white; font-size: 10px; font-weight: 700; cursor: pointer; text-align: center; color: var(--text-main); }
         .fine-option-btn.active-with-fine { border-color: var(--success-green); background: #ecfdf5; color: #065f46; }
         .fine-option-btn.active-no-fine { border-color: var(--danger-red); background: #fef2f2; color: #991b1b; }
 
-        .warning-box { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 8px; border-radius: 6px; font-size: 10.5px; margin-top: 8px; display: none; line-height: 1.4; }
+        .warning-box { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 7px; border-radius: 6px; font-size: 10px; margin-top: 6px; display: none; line-height: 1.4; }
         .warning-box.active { display: block; }
 
-        .advance-pills { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
-        .adv-pill { background: #e0ebff; color: var(--dark-blue); border: 1px solid #bcd1ff; padding: 3px 8px; border-radius: 16px; font-size: 9.5px; font-weight: 700; cursor: pointer; }
+        .advance-pills { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
+        .adv-pill { background: #e0ebff; color: var(--dark-blue); border: 1px solid #bcd1ff; padding: 3px 7px; border-radius: 16px; font-size: 9px; font-weight: 700; cursor: pointer; }
 
-        .payment-proof-card { background: #f0fdf4; border: 1.5px dashed #4ade80; padding: 12px; border-radius: 10px; margin-top: 10px; text-align: center; }
-        .payment-proof-card input[type="file"] { margin-top: 6px; font-size: 10.5px; width: 100%; }
+        .payment-proof-card { background: #f0fdf4; border: 1.5px dashed #4ade80; padding: 10px; border-radius: 8px; margin-top: 8px; text-align: center; }
+        .payment-proof-card input[type="file"] { margin-top: 5px; font-size: 10px; width: 100%; }
 
-        /* Professional Branded Dynamic UPI QR Section (Screenshot Match) */
-        .qr-section { background: #ffffff; border: 1px solid #e2e8f0; padding: 16px; border-radius: 14px; text-align: center; margin-top: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); }
-        .phonepe-top-banner { background: #5f259f; color: white; padding: 8px 12px; border-radius: 10px 10px 0 0; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; font-size: 14px; margin: -16px -16px 12px -16px; }
-        .phonepe-top-banner span { background: white; color: #5f259f; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+        /* Clean Payment Method Selector Section (No Dynamic QR) */
+        .payment-method-section { background: #ffffff; border: 1px solid #e2e8f0; padding: 16px; border-radius: 12px; text-align: center; margin-top: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); }
+        .payment-method-title { font-size: 13px; font-weight: 800; color: var(--dark-blue); margin-bottom: 12px; }
         
-        .branded-qr-frame { background: white; padding: 8px; display: inline-block; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: 1px solid #cbd5e1; margin: 4px 0; position: relative; text-align: center; }
-        .branded-qr-frame img { width: 155px; height: 155px; display: block; margin: 0 auto; cursor: pointer; }
-        
-        .upi-id-label { font-size: 12px; font-weight: 700; color: #334155; margin-top: 6px; }
-        .bhim-upi-footer-img { width: 160px; margin: 6px auto 4px auto; display: block; opacity: 0.9; }
-        .qr-brand-company-title { font-size: 14px; font-weight: 800; color: #1e293b; margin-top: 4px; border-top: 1.5px solid #cbd5e1; padding-top: 6px; letter-spacing: 0.2px; }
+        .pay-option-grid { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 10px; }
+        .pay-option-btn { background: var(--dark-blue); color: white; border: none; padding: 12px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; box-shadow: 0 3px 10px rgba(0,32,96,0.2); }
+        .pay-option-btn.secondary { background: #f1f5f9; color: var(--text-main); border: 1px solid #cbd5e1; box-shadow: none; }
 
-        .timer-text { font-size: 11px; color: var(--danger-red); font-weight: 700; margin-top: 4px; }
-        
-        .qr-action-grid { display: flex; justify-content: center; gap: 8px; margin-top: 10px; }
-        .qr-action-btn { background: var(--primary-blue); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 11.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; text-decoration: none; box-shadow: 0 2px 6px rgba(0,51,153,0.2); }
-        .upi-app-btn { display: block; margin-top: 8px; background: var(--dark-blue); color: white; text-decoration: none; padding: 10px 16px; border-radius: 18px; font-size: 12px; font-weight: 700; box-shadow: 0 3px 10px rgba(0, 32, 96, 0.2); text-align: center; }
+        .payment-proof-card { background: #f0fdf4; border: 1.5px dashed #4ade80; padding: 10px; border-radius: 8px; margin-top: 8px; text-align: center; }
+        .payment-proof-card input[type="file"] { margin-top: 5px; font-size: 10px; width: 100%; }
 
-        .clickable-link-card { background: #f0fdf4; border: 1px solid #86efac; padding: 12px; border-radius: 10px; margin-top: 10px; word-break: break-all; text-align: center; }
-        .clickable-link-card a { color: #15803d; font-weight: 700; font-size: 10.5px; text-decoration: underline; display: block; margin-bottom: 8px; background: white; padding: 7px; border-radius: 6px; border: 1px solid #bbf7d0; }
-        .link-qr-container { background: white; padding: 8px; border-radius: 8px; display: inline-block; border: 2px solid #22c55e; margin: 4px 0 8px 0; cursor: pointer; }
-        .link-qr-container img { width: 140px; height: 140px; display: block; margin: 0 auto; }
+        .clickable-link-card { background: #f0fdf4; border: 1px solid #86efac; padding: 10px; border-radius: 8px; margin-top: 8px; word-break: break-all; text-align: center; }
+        .clickable-link-card a { color: #15803d; font-weight: 700; font-size: 10px; text-decoration: underline; display: block; margin-bottom: 6px; background: white; padding: 6px; border-radius: 5px; border: 1px solid #bbf7d0; }
+        .link-qr-container { background: white; padding: 6px; border-radius: 6px; display: inline-block; border: 2px solid #22c55e; margin: 3px 0 6px 0; cursor: pointer; }
+        .link-qr-container img { width: 130px; height: 130px; display: block; margin: 0 auto; background: #f8fafc; }
 
         .zoom-qr-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; backdrop-filter: blur(4px); }
-        .zoom-qr-box { background: white; padding: 20px; border-radius: 16px; text-align: center; max-width: 340px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.25); }
-        .zoom-qr-box img { width: 240px; height: 240px; display: block; margin: 10px auto; border: 3px solid var(--success-green); padding: 6px; border-radius: 10px; background: white; }
+        .zoom-qr-box { background: white; padding: 18px; border-radius: 14px; text-align: center; max-width: 330px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.25); }
+        .zoom-qr-box img { width: 230px; height: 230px; display: block; margin: 8px auto; border: 3px solid var(--success-green); padding: 5px; border-radius: 8px; background: white; }
 
-        .congrats-badge-circle { width: 68px; height: 68px; border-radius: 50%; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 34px; margin: 0 auto 10px auto; border: 3px solid #86efac; }
-        .congrats-receipt-box { background: #f8fafc; border: 1px dashed var(--border-color); border-radius: 8px; padding: 10px; margin: 10px 0; text-align: left; font-size: 11px; line-height: 1.6; }
+        .congrats-badge-circle { width: 62px; height: 62px; border-radius: 50%; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 8px auto; border: 3px solid #86efac; }
+        .congrats-receipt-box { background: #f8fafc; border: 1px dashed var(--border-color); border-radius: 7px; padding: 9px; margin: 8px 0; text-align: left; font-size: 10.5px; line-height: 1.6; }
         .congrats-receipt-row { display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding: 2px 0; }
         .congrats-receipt-row:last-child { border-bottom: none; }
 
-        .actions { margin-top: auto; padding: 8px 0; display: flex; flex-direction: column; gap: 7px; }
-        .btn { width: 100%; padding: 11px; border: none; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .btn-primary { background: var(--primary-blue); color: white; box-shadow: 0 3px 10px rgba(0, 51, 153, 0.2); }
-        .btn-success { background: var(--success-green); color: white; box-shadow: 0 3px 10px rgba(16, 185, 129, 0.2); }
+        .actions { margin-top: auto; padding: 6px 0; display: flex; flex-direction: column; gap: 6px; }
+        .btn { width: 100%; padding: 10px; border: none; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .btn-primary { background: var(--primary-blue); color: white; box-shadow: 0 3px 8px rgba(0, 51, 153, 0.2); }
+        .btn-success { background: var(--success-green); color: white; box-shadow: 0 3px 8px rgba(16, 185, 129, 0.2); }
         .btn-whatsapp { background: #16a34a; color: white; }
         .btn-sms { background: #0284c7; color: white; }
         .btn-pdf { background: #0f172a; color: white; }
         .btn-secondary { background: #e2e8f0; color: var(--text-main); }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); display: none; justify-content: center; align-items: center; z-index: 100; padding: 16px; backdrop-filter: blur(3px); }
-        .modal { background: white; width: 100%; max-width: 370px; padding: 18px; border-radius: 16px; text-align: center; box-shadow: 0 15px 30px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
-        .modal h3 { color: var(--dark-blue); font-size: 15px; margin-bottom: 6px; }
-        .modal p { color: var(--text-muted); font-size: 11.5px; margin-bottom: 10px; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); display: none; justify-content: center; align-items: center; z-index: 100; padding: 14px; backdrop-filter: blur(3px); }
+        .modal { background: white; width: 100%; max-width: 360px; padding: 16px; border-radius: 14px; text-align: center; box-shadow: 0 15px 30px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
+        .modal h3 { color: var(--dark-blue); font-size: 14.5px; margin-bottom: 5px; }
+        .modal p { color: var(--text-muted); font-size: 11px; margin-bottom: 8px; }
 
         @media print {
             body * { visibility: hidden; }
@@ -222,8 +228,7 @@
     <!-- Enterprise Brand Header -->
     <div class="enterprise-header">
         <div class="brand-box" onclick="handleSecretLogoTap()">
-            <!-- Fixed Corporate Logo Icon -->
-            <div style="width: 32px; height: 32px; background: white; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #002060; font-size: 16px;">₹</div>
+            <div class="brand-logo-icon">₹</div>
             <div class="brand-text">
                 <h1 id="headerBrandTitle">BHARAT DIGITAL FINANCE</h1>
                 <span id="headerBrandSub">Digital Inclusive Empowering Bharat</span>
@@ -244,13 +249,20 @@
     <div class="db-status-bar officer-only" id="topDbBar" style="display: none;">
         <span>🗄️ DB (<span id="topBarCount">1</span>):</span>
         <select id="quickCustomerSelect" onchange="selectCustomerFromMemory(parseInt(this.value))"></select>
-        <button class="sm-btn success" style="padding: 3px 7px;" onclick="openNewCustomerModal()">+ Add New</button>
+        <button class="sm-btn success" style="padding: 3px 6px;" onclick="openNewCustomerModal()">+ Add New</button>
+    </div>
+
+    <!-- Bajaj Style Sub-Navbar Tabs -->
+    <div class="bajaj-sub-nav customer-only">
+        <div class="bajaj-tab active" onclick="switchBajajTab('overview', this)">Overview</div>
+        <div class="bajaj-tab" onclick="switchBajajTab('documents', this)">Documents & Statements</div>
+        <div class="bajaj-tab" onclick="switchBajajTab('transactions', this)">Recent Transactions</div>
+        <div class="bajaj-tab" onclick="switchBajajTab('details', this)">Loan Details</div>
     </div>
 
     <!-- SCREEN 1: OFFICER ADMIN, MEMORY DB & DATA ENTRY WORKSPACE -->
     <div id="screenSetup" class="screen officer-only">
         
-        <!-- MEMORY DATABASE MANAGER -->
         <div class="card">
             <div class="card-title">
                 <span>🗄️ 1. Customer Memory Database (<span id="memCount">0</span> Saved)</span>
@@ -260,22 +272,21 @@
                 </div>
             </div>
             <div class="memory-list" id="customerMemoryList"></div>
-            <div style="display: flex; gap: 6px; margin-top: 6px; padding-top: 6px; border-top: 1px dashed #e2e8f0;">
+            <div style="display: flex; gap: 5px; margin-top: 5px; padding-top: 5px; border-top: 1px dashed #e2e8f0;">
                 <button class="sm-btn" style="flex:1; background:#e2e8f0;" onclick="exportDatabaseJson()">⬇️ Export</button>
                 <button class="sm-btn" style="flex:1; background:#e2e8f0;" onclick="document.getElementById('importDbInput').click()">⬆️ Import</button>
                 <input type="file" id="importDbInput" accept=".json" style="display:none" onchange="importDatabaseJson(event)">
             </div>
         </div>
 
-        <!-- HITECH OCR SCREENSHOT SCANNER -->
         <div class="card">
             <div class="card-title">
                 <span>🤖 2. Smart OCR Screenshot Scanner</span>
-                <span style="font-size: 9.5px; background: #dcfce7; color: #15803d; padding: 2px 5px; border-radius: 4px;">Auto-Fills</span>
+                <span style="font-size: 9px; background: #dcfce7; color: #15803d; padding: 2px 5px; border-radius: 4px;">Auto-Fills</span>
             </div>
             <div class="ocr-box">
-                <span style="font-size: 11.5px; font-weight: 800; color: var(--dark-blue);">📷 Upload Statement Screenshot for Auto-OCR</span>
-                <p style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">Reads Name, Phone, EMI, Dates & UTRs automatically</p>
+                <span style="font-size: 11px; font-weight: 800; color: var(--dark-blue);">📷 Upload Statement Screenshot for Auto-OCR</span>
+                <p style="font-size: 9.5px; color: var(--text-muted); margin-top: 2px;">Reads Name, Phone, EMI, Dates & UTRs automatically</p>
                 <input type="file" accept="image/*" onchange="runFullOcrExtraction(event)">
             </div>
             <div class="progress-bar" id="ocrProgressBar">
@@ -284,7 +295,6 @@
             <div id="ocrStatusMsg" class="ocr-status"></div>
         </div>
 
-        <!-- EDITABLE CUSTOMER PROFILE ON HOME PAGE -->
         <div class="card" id="editableProfileCard">
             <div class="card-title">
                 <span>✏️ 3. Active Customer Profile & Data Entry</span>
@@ -338,16 +348,15 @@
             </div>
         </div>
 
-        <!-- EDITABLE INSTALLMENT & PAYMENT HISTORY TABLE -->
         <div class="card" id="editableHistoryCard">
             <div class="card-title">
                 <span>📅 4. Installment & Payment History Data Entry</span>
             </div>
             <div class="inst-add-bar">
-                <span style="font-size: 10.5px; font-weight: 700; color: var(--dark-blue);">Total EMI Count (#):</span>
+                <span style="font-size: 10px; font-weight: 700; color: var(--dark-blue);">Total EMI Count (#):</span>
                 <input type="number" id="quickAddCountInput" value="8" min="1" max="48">
-                <button class="sm-btn load" style="padding: 5px 10px;" onclick="generateInstallmentRowsByNumber()">⚡ Generate</button>
-                <button class="sm-btn" style="padding: 5px 8px; background: #e2e8f0; margin-left: auto;" onclick="addInstallmentRow()">+ Row</button>
+                <button class="sm-btn load" style="padding: 4px 8px;" onclick="generateInstallmentRowsByNumber()">⚡ Generate</button>
+                <button class="sm-btn" style="padding: 4px 6px; background: #e2e8f0; margin-left: auto;" onclick="addInstallmentRow()">+ Row</button>
             </div>
             
             <div class="inst-editor-header">
@@ -361,7 +370,6 @@
             <div id="adminInstallmentEditor"></div>
         </div>
 
-        <!-- BRANDING, COMPANY MOBILE, UPI & LINK GENERATOR -->
         <div class="card">
             <div class="card-title">
                 <span>🔐 5. NBFC Link Generator & Fine-Only Link Mode</span>
@@ -390,8 +398,7 @@
                 </div>
             </div>
 
-            <!-- Toggle for Fine-Only Link -->
-            <div class="form-group" style="margin-top: 8px; background: #fffbeb; border: 1px solid #fde68a; padding: 8px; border-radius: 6px;">
+            <div class="form-group" style="margin-top: 6px; background: #fffbeb; border: 1px solid #fde68a; padding: 7px; border-radius: 6px;">
                 <label style="color: #92400e; font-weight: 800;">🎯 Link Mode Selection</label>
                 <select id="inputLinkMode" class="form-control" style="background: white;">
                     <option value="full">Full EMI & Fine Repayment Portal Link</option>
@@ -399,27 +406,27 @@
                 </select>
             </div>
 
-            <button class="btn btn-primary" style="padding: 11px; font-size: 12.5px; margin-top: 6px;" onclick="generateEncryptedShortLink()">🔐 Generate Encrypted Customer Link & QR</button>
+            <button class="btn btn-primary" style="padding: 10px; font-size: 12px; margin-top: 5px;" onclick="generateEncryptedShortLink()">🔐 Generate Encrypted Customer Link & QR</button>
             
             <div id="inlineClickableLinkBox" class="clickable-link-card" style="display: none;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-                    <span style="font-size: 10px; background:#dcfce7; color:#166534; padding:2px 7px; border-radius:10px; font-weight:800;" id="linkModeBadgeLabel">🔒 Full Repayment Link</span>
-                    <span style="font-size: 9.5px; color:#15803d; font-weight:700;" id="cipherLengthBadge">Ultra-Short Token</span>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                    <span style="font-size: 9.5px; background:#dcfce7; color:#166534; padding:2px 6px; border-radius:10px; font-weight:800;" id="linkModeBadgeLabel">🔒 Full Repayment Link</span>
+                    <span style="font-size: 9px; color:#15803d; font-weight:700;" id="cipherLengthBadge">Token</span>
                 </div>
                 
                 <div class="link-qr-container" onclick="openZoomedQrModal()" title="Tap to Zoom View">
                     <img id="portalLinkQrImg" src="" alt="Customer Portal Link QR Code">
-                    <div style="font-size: 9.5px; color: #15803d; font-weight: 800; margin-top: 3px;">🔍 Tap to Zoom Encrypted QR</div>
+                    <div style="font-size: 9px; color: #15803d; font-weight: 800; margin-top: 2px;">🔍 Tap to Zoom Encrypted QR</div>
                 </div>
 
-                <span style="font-size: 10px; color: #166534; font-weight: 700; display: block; margin-bottom: 3px;">🔗 Short Encrypted Customer Link:</span>
+                <span style="font-size: 9.5px; color: #166534; font-weight: 700; display: block; margin-bottom: 2px;">🔗 Short Encrypted Customer Link:</span>
                 <a href="#" id="clickableAnchorLink" target="_blank">Open Encrypted Link</a>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 6px;">
-                    <button class="sm-btn load" style="padding: 7px;" onclick="copyGeneratedLink()">📋 Copy Short Link</button>
-                    <button class="sm-btn success" style="padding: 7px;" onclick="shareLinkWhatsApp()">💬 Send on WhatsApp</button>
-                    <button class="sm-btn" style="padding: 7px; background: #0f172a; color: white;" onclick="openZoomedQrModal()">🔍 Zoom QR</button>
-                    <button class="sm-btn" style="padding: 7px; background:#cbd5e1;" onclick="previewCustomerLockedMode()">👁️ Preview View</button>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 5px;">
+                    <button class="sm-btn load" style="padding: 6px;" onclick="copyGeneratedLink()">📋 Copy Link</button>
+                    <button class="sm-btn success" style="padding: 6px;" onclick="shareLinkWhatsApp()">💬 WhatsApp</button>
+                    <button class="sm-btn" style="padding: 6px; background: #0f172a; color: white;" onclick="openZoomedQrModal()">🔍 Zoom QR</button>
+                    <button class="sm-btn" style="padding: 6px; background:#cbd5e1;" onclick="previewCustomerLockedMode()">👁️ Preview</button>
                 </div>
             </div>
         </div>
@@ -429,47 +436,127 @@
         </div>
     </div>
 
-    <!-- SCREEN 2: COLLECTION & PAYMENT DASHBOARD -->
+    <!-- SCREEN 2: COLLECTION & PAYMENT DASHBOARD (Bajaj Finserv Style) -->
     <div id="screenDashboard" class="screen active">
-        <!-- Top Blue Banner -->
-        <div class="top-banner">
-            <div class="banner-profile">
-                <div class="banner-avatar-wrap">
-                    <!-- Fixed Corporate Logo Icon -->
-                    <div style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #002060; font-size: 22px; border: 2px solid white;">₹</div>
-                    <span class="upi-mini-tag">UPI▸</span>
+        
+        <!-- Bajaj Style Product Card Header -->
+        <div class="bajaj-product-header">
+            <div class="product-top-row">
+                <div class="product-title" id="bajajProductTitle">PERSONAL LOAN - BDFL</div>
+                <span class="status-pill-active" id="dashAccountStatusPill">Active</span>
+            </div>
+            <div class="loan-ac-text">Loan account number: <strong id="dashLoanId">BDFL-LOAN-001</strong></div>
+            
+            <div class="next-due-alert" id="nextDueAlertBox">
+                <span>⚠️</span> <span id="nextDueAlertText">Next EMI due in 16 days: ₹1,568</span>
+            </div>
+
+            <!-- Loan Progress Bar -->
+            <div class="loan-progress-container">
+                <div class="loan-progress-bar">
+                    <div class="loan-progress-fill" id="loanProgressFill" style="width: 45%;"></div>
                 </div>
-                <div class="banner-info">
-                    <h2 id="dashName">CUSTOMER NAME</h2>
-                    <p id="dashPhone">+91 9800000000</p>
-                    <span class="loan-pill" id="dashLoanId">Loan ID: BDFL-LOAN</span>
+                <div class="loan-progress-labels">
+                    <span>Paid: <strong id="progPaidAmt">₹7,500</strong></span>
+                    <span>Remaining: <strong id="progRemainAmt">₹10,500</strong></span>
+                </div>
+            </div>
+
+            <div class="loan-meta-grid">
+                <div class="loan-meta-item">
+                    <p>Loan start date</p>
+                    <h4 id="metaStartDate">10 Sep 2026</h4>
+                </div>
+                <div class="loan-meta-item" style="text-align: right;">
+                    <p>Tenure</p>
+                    <h4 id="metaTenure">8 months</h4>
+                </div>
+                <div class="loan-meta-item" style="margin-top: 6px;">
+                    <p>Rate of interest p.a.</p>
+                    <h4>0% (Zero Cost)</h4>
+                </div>
+                <div class="loan-meta-item" style="text-align: right; margin-top: 6px;">
+                    <p>EMIs paid / pending</p>
+                    <h4 id="metaEmisCount">3 paid / 5 pending</h4>
                 </div>
             </div>
         </div>
 
-        <!-- Floating Summary Card -->
-        <div class="floating-summary-card">
-            <span class="active-pill" id="dashAccountStatusPill">Active</span>
-            <div class="summary-grid">
-                <div class="sum-col">
-                    <p>Total amount</p>
-                    <h3 id="dashTotalAmount">₹ 0</h3>
-                </div>
-                <div class="sum-col right">
-                    <p>Collected</p>
-                    <h3 id="dashCollectedAmount" style="color: var(--success-green);">₹ 0</h3>
+        <!-- Bajaj Quick Actions Row -->
+        <div class="quick-actions-grid customer-only">
+            <div class="quick-action-card" onclick="document.getElementById('customPayAmountInput').scrollIntoView({behavior: 'smooth'})">
+                <div class="quick-action-icon">₹</div>
+                <h5>Make Payments</h5>
+            </div>
+            <div class="quick-action-card" onclick="alert('Bank Mandate / NACH active via NPCI e-Mandate.')">
+                <div class="quick-action-icon">🏦</div>
+                <h5>Bank Account</h5>
+            </div>
+            <div class="quick-action-card" onclick="printBrandedStatement()">
+                <div class="quick-action-icon">📄</div>
+                <h5>No Dues / SOA</h5>
+            </div>
+        </div>
+
+        <!-- Bajaj Collapsible Accordions -->
+        <div class="bajaj-accordion customer-only">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+                <span>📂 Documents and Statements</span>
+                <span>▼</span>
+            </div>
+            <div class="accordion-content">
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px; background: #f8fafc; border-radius: 6px; cursor: pointer;" onclick="printBrandedStatement()">
+                        <span>📥 Statement of Account (SOA)</span>
+                        <strong style="color: var(--primary-blue);">View / PDF</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px; background: #f8fafc; border-radius: 6px; cursor: pointer;" onclick="printLegalNoticePdf()">
+                        <span>⚠️ Official Demand Notice / Terms</span>
+                        <strong style="color: var(--danger-red);">PDF</strong>
+                    </div>
                 </div>
             </div>
-            <div class="address-bar">
-                <span id="dashAddress">📍 Branch Address</span>
-                <span>👨‍💼 Agent: <strong id="dashAgentName">Chandan Das</strong></span>
+        </div>
+
+        <div class="bajaj-accordion customer-only">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+                <span>👥 Co-Borrower Details</span>
+                <span>▼</span>
+            </div>
+            <div class="accordion-content">
+                <p><strong>Primary Borrower:</strong> <span id="accCoName">As per active customer record</span><br>
+                <strong>Relationship:</strong> Self / Co-Applicant<br>
+                <strong>Verification Status:</strong> KYC Verified via Aadhaar & PAN e-Sign</p>
+            </div>
+        </div>
+
+        <div class="bajaj-accordion customer-only">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+                <span>🏦 Bank Details</span>
+                <span>▼</span>
+            </div>
+            <div class="accordion-content">
+                <p><strong>Linked Collection Merchant UPI:</strong> <span id="accBankUpi">Q064772617@ybl</span><br>
+                <strong>Mandate Mode:</strong> NPCI Auto-Debit / UPI Intent / Direct Scan<br>
+                <strong>Status:</strong> Active & Verified</p>
+            </div>
+        </div>
+
+        <div class="bajaj-accordion customer-only">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+                <span>🛡️ Insurance Details</span>
+                <span>▼</span>
+            </div>
+            <div class="accordion-content">
+                <p><strong>Credit Protection Cover:</strong> Included under BDFL Group Borrower Security Policy.<br>
+                <strong>Coverage:</strong> Active against unforeseen contingencies.</p>
             </div>
         </div>
 
         <!-- NBFC Official Notice Banner -->
         <div class="nbfc-notice-banner customer-only">
             <strong>⚠️ NBFC REGULATORY RECOVERY NOTICE</strong>
-            This is an official digital demand notice issued under the guidelines of Reserve Bank of India (RBI) Non-Banking Financial Company (NBFC) regulations. Failure to clear overdue EMIs and bounce penalty charges within 3 days shall attract immediate legal arbitration and CIBIL score default reporting.
+            Official digital demand notice issued under RBI guidelines. Clear overdue EMIs and bounce penalty charges within 3 days to avoid CIBIL score default reporting and legal arbitration.
         </div>
 
         <!-- Officer Quick Bar on Dashboard -->
@@ -492,7 +579,7 @@
         <div class="card">
             <div class="card-title">
                 <span id="dashboardCardTitleText">💳 Current Due & Advance Payment</span>
-                <span style="color: var(--danger-red); font-size: 10.5px;" id="activeDueDateBadge">Current Due</span>
+                <span style="color: var(--danger-red); font-size: 10px;" id="activeDueDateBadge">Current Due</span>
             </div>
 
             <table class="due-Breakdown-table">
@@ -518,16 +605,16 @@
                 </div>
                 <div class="fine-radio-group">
                     <button type="button" class="fine-option-btn active-with-fine" id="btnPayWithFine" onclick="setFineOption(true)">
-                        ✅ Select Fine<br><span style="font-size:9px; font-weight:600;">(Protects CIBIL Score)</span>
+                        ✅ Select Fine<br><span style="font-size:8.5px; font-weight:600;">(Protects CIBIL Score)</span>
                     </button>
                     <button type="button" class="fine-option-btn" id="btnPayWithoutFine" onclick="setFineOption(false)">
-                        ❌ Deselect Fine (₹0)<br><span style="font-size:9px; font-weight:600;">(EMI Only - CIBIL Risk)</span>
+                        ❌ Deselect Fine (₹0)<br><span style="font-size:8.5px; font-weight:600;">(EMI Only - CIBIL Risk)</span>
                     </button>
                 </div>
             </div>
 
             <!-- Advance EMI & Full Amount Multiplier Input -->
-            <div class="form-group" id="advanceEmiInputWrapper" style="margin-top: 10px; text-align: left;">
+            <div class="form-group" id="advanceEmiInputWrapper" style="margin-top: 8px; text-align: left;">
                 <label style="color: var(--dark-blue); font-weight: 800;">💡 Custom / Full Amount Selection (₹)</label>
                 <input type="number" id="customPayAmountInput" class="form-control" style="font-size: 14.5px; font-weight: 700; color: var(--primary-blue); background: #f0f4ff; border-color: #93c5fd;" onchange="updateCustomPayAmount(this.value)">
                 <div class="advance-pills">
@@ -540,63 +627,37 @@
 
             <!-- CIBIL Warning Alert -->
             <div class="warning-box" id="cibilWarningBox">
-                ⚠️ <strong>CIBIL & Legal Warning:</strong> Deselecting the bounce fine keeps your loan account in default arrears, which will negatively impact your CIBIL credit score and may attract legal recovery action.
+                ⚠️ <strong>CIBIL & Legal Warning:</strong> Deselecting the bounce fine keeps your loan account in default arrears and impacts CIBIL score.
             </div>
 
-            <!-- Loan Agreement & Digital Consent Form Checkbox (Customer Only) -->
+            <!-- Loan Agreement Consent -->
             <div class="agreement-box customer-only">
                 <label>
                     <input type="checkbox" id="customerAgreementConsent" onchange="toggleAgreementConsent()">
-                    <span>I hereby declare that I am the borrower/authorized representative, and I agree to the <a href="#" onclick="openAgreementModal(event)" style="color:var(--primary-blue);">NBFC Loan Hypothecation Terms & Conditions</a> and digital consent guidelines.</span>
+                    <span>I declare that I am the borrower, and I agree to the <a href="#" onclick="openAgreementModal(event)" style="color:var(--primary-blue);">NBFC Loan Hypothecation Terms & Conditions</a>.</span>
                 </label>
             </div>
 
-            <!-- PROFESSIONAL BRANDED DYNAMIC UPI QR & MULTI-PAYMENT PARTNERS SECTION -->
-            <div class="qr-section">
-                <!-- PhonePe Style Banner matching screenshot -->
-                <div class="phonepe-top-banner">
-                    <span>पे</span> PhonePe
-                </div>
-
-                <div style="font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 5px;">Scan & Pay with any UPI App</div>
+            <!-- CLEAN PAYMENT METHOD SELECTOR (NO DYNAMIC QR) -->
+            <div class="payment-method-section">
+                <div class="payment-method-title">⚡ Select Payment Method</div>
                 
-                <!-- Supported Payment Partners Badges -->
-                <div class="qr-partner-badges">
-                    <span class="partner-pill">🔵 PhonePe</span>
-                    <span class="partner-pill">🟢 GPay</span>
-                    <span class="partner-pill">🟡 Paytm</span>
-                    <span class="partner-pill">🟣 BHIM</span>
+                <div class="pay-option-grid">
+                    <button type="button" class="pay-option-btn" onclick="triggerUpiPaymentApp()">
+                        <span>🚀 Pay Now via UPI App (PhonePe / GPay / Paytm)</span>
+                    </button>
                 </div>
 
-                <!-- Branded QR Frame matching Screenshot -->
-                <div class="branded-qr-frame" onclick="openZoomedUpiQrModal()" title="Tap to Zoom QR">
-                    <img id="dynamicQrImg" src="" alt="UPI QR Code">
-                    <div class="upi-id-label">UPI ID : <span id="dashUpiIdText">Q064772617@ybl</span></div>
-                    <!-- BHIM UPI Footer Logo -->
-                    <svg class="bhim-upi-footer-img" viewBox="0 0 300 45" xmlns="http://www.w3.org/2000/svg">
-                        <text x="10" y="32" font-size="28" font-weight="900" font-family="Arial" fill="#1e293b" letter-spacing="1">BHIM<tspan fill="#ea580c">►</tspan></text>
-                        <line x1="135" y1="8" x2="135" y2="38" stroke="#cbd5e1" stroke-width="2"/>
-                        <text x="145" y="31" font-size="24" font-weight="700" font-family="Arial" fill="#003399" letter-spacing="1">UPI<tspan fill="#16a34a">►</tspan></text>
-                    </svg>
-                    <div class="qr-brand-company-title">Bharat Digital Finance Limited</div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px;">
+                    Merchant UPI ID: <strong style="color: var(--dark-blue);" id="dashUpiIdText">Q064772617@ybl</strong>
                 </div>
-
-                <div style="font-size: 9.5px; color: var(--primary-blue); font-weight: 700; margin-top: 2px; cursor: pointer;" onclick="openZoomedUpiQrModal()">🔍 Tap QR for Zoomed View</div>
-                <div class="timer-text" id="qrCountdown">QR Valid For: 10:00</div>
-
-                <!-- Action Button: Download Branded QR Only -->
-                <div class="qr-action-grid">
-                    <button class="qr-action-btn" onclick="downloadBrandedCanvasQr()">📥 Download Branded QR</button>
-                </div>
-
-                <a href="#" id="directUpiAppBtn" class="upi-app-btn">⚡ Pay Now via UPI App (<span id="upiBtnAmountText">₹2,068</span>)</a>
             </div>
 
-            <!-- Payment Proof & Amount Verification Card for Customer -->
+            <!-- Payment Proof Upload Card -->
             <div class="payment-proof-card customer-only" id="paymentProofCardSection" style="opacity: 0.5; pointer-events: none;">
-                <div style="font-size: 11px; font-weight: 800; color: #166534; margin-bottom: 3px;">📤 Confirm Payment & Upload Screenshot</div>
-                <p style="font-size: 9.5px; color: #15803d; margin-bottom: 5px;">(Please agree to the loan agreement above to enable submission)</p>
-                <div class="form-row" style="margin-bottom: 5px;">
+                <div style="font-size: 10.5px; font-weight: 800; color: #166534; margin-bottom: 2px;">📤 Confirm Payment & Upload Screenshot</div>
+                <p style="font-size: 9px; color: #15803d; margin-bottom: 4px;">(Please agree to the loan agreement above to enable submission)</p>
+                <div class="form-row" style="margin-bottom: 4px;">
                     <div class="form-group" style="text-align: left;">
                         <label style="color: #166534;">Paid Amount (₹)</label>
                         <input type="number" id="customerPaidAmountInput" class="form-control" placeholder="Enter amount paid" oninput="verifyCustomerPaymentMatch()">
@@ -606,50 +667,67 @@
                         <input type="text" id="customerPaidUtrInput" class="form-control" placeholder="12-digit UTR">
                     </div>
                 </div>
-                <div id="paymentMatchStatusNotice" style="font-size: 10.5px; font-weight: 700; margin-bottom: 6px; color: #b45309;">⚠️ Enter paid amount to verify status.</div>
+                <div id="paymentMatchStatusNotice" style="font-size: 10px; font-weight: 700; margin-bottom: 5px; color: #b45309;">⚠️ Enter paid amount to verify status.</div>
                 <input type="file" id="customerProofFile" accept="image/*" class="form-control" style="background: white;">
-                <button class="btn btn-success" style="margin-top: 7px; padding: 9px; font-size: 11.5px;" onclick="customerSubmitProofAndShowCongrats()">✅ Confirm Payment & View Receipt</button>
+                <button class="btn btn-success" style="margin-top: 6px; padding: 8px; font-size: 11px;" onclick="customerSubmitProofAndShowCongrats()">✅ Confirm Payment & View Receipt</button>
             </div>
 
             <!-- Customer Feedback & Promise-to-Pay Form -->
             <div class="payment-proof-card customer-only" style="margin-top: 8px; background: #fffbeb; border-color: #fde68a;">
-                <div style="font-size: 11.5px; font-weight: 800; color: #92400e; margin-bottom: 3px;">📝 Customer Feedback & Promise-to-Pay</div>
-                <p style="font-size: 9.5px; color: #b45309; margin-bottom: 6px;">Request a payment date extension or send feedback to agent <strong id="feedbackAgentName">Chandan Das</strong>:</p>
+                <div style="font-size: 11px; font-weight: 800; color: #92400e; margin-bottom: 2px;">📝 Customer Feedback & Promise-to-Pay</div>
+                <p style="font-size: 9px; color: #b45309; margin-bottom: 5px;">Request a payment extension or send feedback to agent <strong id="feedbackAgentName">Chandan Das</strong>:</p>
                 
                 <div class="form-group" style="text-align: left;">
                     <label style="color: #92400e;">Promise-to-Pay Date</label>
                     <input type="date" id="customerPromiseDate" class="form-control" style="background: white;">
                 </div>
-                <div class="form-group" style="text-align: left; margin-top: 5px;">
+                <div class="form-group" style="text-align: left; margin-top: 4px;">
                     <label style="color: #92400e;">Feedback / Reason for Delay</label>
                     <textarea id="customerFeedbackText" class="form-control" rows="2" placeholder="Enter your remarks or payment commitment notes..." style="background: white; resize: none;"></textarea>
                 </div>
-                <button class="btn btn-whatsapp" style="margin-top: 5px; padding: 8px; font-size: 11px;" onclick="submitCustomerFeedbackWhatsApp()">💬 Submit Promise-to-Pay on WhatsApp</button>
+                <button class="btn btn-whatsapp" style="margin-top: 4px; padding: 7px; font-size: 10.5px;" onclick="submitCustomerFeedbackWhatsApp()">💬 Submit Promise-to-Pay on WhatsApp</button>
             </div>
 
             <!-- Officer Quick Link QR Card on Dashboard -->
             <div class="qr-section officer-only" style="background: #f0fdf4; border-color: #bbf7d0; margin-top: 8px;">
-                <div style="font-size: 10.5px; font-weight: 800; color: #166534;">📲 Encrypted Customer Link QR (Tap to Zoom)</div>
+                <div style="font-size: 10px; font-weight: 800; color: #166534;">📲 Encrypted Customer Link QR (Tap to Zoom)</div>
                 <div class="qr-box" style="border: 1.5px solid #22c55e; cursor: pointer;" onclick="openZoomedQrModal()">
-                    <img id="dashPortalLinkQrImg" src="" alt="Portal Link QR Code" style="width: 110px; height: 110px;">
+                    <img id="dashPortalLinkQrImg" src="" alt="Portal Link QR Code" style="width: 100px; height: 100px;">
                 </div>
-                <div style="font-size: 9.5px; color: #15803d; font-weight: 800; cursor: pointer;" onclick="openZoomedQrModal()">🔍 Tap QR for Zoomed View</div>
+                <div style="font-size: 9px; color: #15803d; font-weight: 800; cursor: pointer;" onclick="openZoomedQrModal()">🔍 Tap QR for Zoomed View</div>
             </div>
         </div>
 
-        <!-- Customer-Only Actions -->
+        <!-- Customer Actions -->
         <div class="actions customer-only">
             <button class="btn btn-pdf" onclick="printBrandedStatement()">📥 Download Official Statement of Account (SOA - PDF)</button>
             <button class="btn btn-danger" style="background: #dc2626; color: white;" onclick="printLegalNoticePdf()">⚠️ Download Formal Legal Notice (PDF)</button>
         </div>
 
-        <!-- Officer-Only Actions -->
+        <!-- Officer Actions -->
         <div class="actions officer-only">
             <button class="btn btn-primary" onclick="openMarkPaymentModal()">✅ Mark Payment Received (Officer)</button>
             <button class="btn btn-pdf" onclick="printBrandedStatement()">📥 Download Official Statement of Account (SOA - PDF)</button>
             <button class="btn btn-danger" style="background: #dc2626; color: white;" onclick="printLegalNoticePdf()">⚠️ Generate & Download Legal Notice (PDF)</button>
             <a href="#" class="btn btn-whatsapp" onclick="sendWhatsAppUpdate(event)">💬 Send Notice / Receipt to Customer WhatsApp</a>
             <a href="#" class="btn btn-sms" onclick="sendSmsAlert(event)">📲 Send Payment & CIBIL Alert to Customer SMS</a>
+        </div>
+    </div>
+
+    <!-- MODAL: APP CHOOSER FOR PAY NOW -->
+    <div class="modal-overlay" id="upiAppChooserModal" style="display: none;">
+        <div class="modal" style="max-width: 320px;">
+            <h3 style="color: var(--dark-blue);">⚡ Choose UPI Payment App</h3>
+            <p style="font-size: 11px; margin-bottom: 12px;">Select your preferred app to complete payment of <strong id="chooserAmountText">₹2,068</strong>:</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <a href="#" id="appLinkPhonePe" class="btn" style="background: #5f259f; color: white; padding: 10px;">🔵 Pay via PhonePe</a>
+                <a href="#" id="appLinkGPay" class="btn" style="background: #1e293b; color: white; padding: 10px;">🟢 Pay via Google Pay (GPay)</a>
+                <a href="#" id="appLinkPaytm" class="btn" style="background: #00b9f1; color: white; padding: 10px;">🟡 Pay via Paytm</a>
+                <a href="#" id="appLinkBhim" class="btn" style="background: #003399; color: white; padding: 10px;">🟣 Pay via BHIM / Any UPI</a>
+            </div>
+            
+            <button class="btn btn-secondary" style="margin-top: 10px; padding: 8px;" onclick="document.getElementById('upiAppChooserModal').style.display = 'none';">Cancel</button>
         </div>
     </div>
 
@@ -709,31 +787,31 @@
 
     <!-- MODAL: LOAN AGREEMENT -->
     <div class="modal-overlay" id="agreementModal">
-        <div class="modal" style="text-align: left; max-width: 400px;">
+        <div class="modal" style="text-align: left; max-width: 390px;">
             <h3 style="color: var(--dark-blue); text-align: center;">📜 NBFC Loan Hypothecation Agreement</h3>
-            <p style="font-size: 10px; color: var(--text-muted); text-align: center; margin-bottom: 8px;">Bharat Digital Finance Limited - Digital Lending Terms</p>
+            <p style="font-size: 9.5px; color: var(--text-muted); text-align: center; margin-bottom: 6px;">Bharat Digital Finance Limited - Digital Lending Terms</p>
             
-            <div style="font-size: 10.5px; line-height: 1.5; color: var(--text-main); max-height: 200px; overflow-y: auto; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color); margin-bottom: 10px;">
+            <div style="font-size: 10px; line-height: 1.5; color: var(--text-main); max-height: 190px; overflow-y: auto; background: #f8fafc; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color); margin-bottom: 8px;">
                 <strong>1. Repayment Obligation:</strong> The borrower agrees to repay installments as per the agreed schedule without default.<br><br>
                 <strong>2. Bounce & Late Charges:</strong> In the event of ECS/NACH/UPI bounce or delay, a mandatory bounce penalty charge (default ₹500.00) shall be levied immediately.<br><br>
                 <strong>3. CIBIL Reporting:</strong> Persistent defaults exceeding 30 days will be reported to Credit Information Bureaus (CIBIL/Experian), adversely affecting credit score.<br><br>
                 <strong>4. Legal Recourse:</strong> The lender reserves full legal rights to initiate proceedings under Section 138 of the Negotiable Instruments Act and Arbitration & Conciliation Act.
             </div>
 
-            <button class="btn btn-primary" style="padding: 9px; font-size: 12px;" onclick="acceptAgreementFromModal()">✅ I Agree & Accept Terms</button>
-            <button class="btn btn-secondary" style="padding: 7px; font-size: 11px; margin-top: 5px;" onclick="closeAllModals()">Close</button>
+            <button class="btn btn-primary" style="padding: 8px; font-size: 11.5px;" onclick="acceptAgreementFromModal()">✅ I Agree & Accept Terms</button>
+            <button class="btn btn-secondary" style="padding: 6px; font-size: 11px; margin-top: 4px;" onclick="closeAllModals()">Close</button>
         </div>
     </div>
 
     <!-- MODAL: INITIAL WARNING -->
     <div class="modal-overlay" id="customerWarningDemandModal" style="display: none;">
         <div class="modal">
-            <div style="width: 48px; height: 48px; background: #fee2e2; color: #dc2626; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; margin: 0 auto 8px auto; border: 2px solid #fecaca;">⚠️</div>
-            <h3 style="color: #991b1b; font-size: 16px;">URGENT RECOVERY NOTICE</h3>
-            <p style="font-size: 11px; color: #334155; margin-bottom: 10px; line-height: 1.4;">
+            <div style="width: 44px; height: 44px; background: #fee2e2; color: #dc2626; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; margin: 0 auto 6px auto; border: 2px solid #fecaca;">⚠️</div>
+            <h3 style="color: #991b1b; font-size: 15px;">URGENT RECOVERY NOTICE</h3>
+            <p style="font-size: 10.5px; color: #334155; margin-bottom: 8px; line-height: 1.4;">
                 Dear Customer, your loan account has overdue installments and bounce penalty charges. Please clear your dues immediately to avoid legal action and CIBIL blacklisting.
             </p>
-            <button class="btn btn-success" style="padding: 9px; font-size: 12px;" onclick="closeCustomerWarningModal()">I Understand & Proceed to Pay</button>
+            <button class="btn btn-success" style="padding: 8px; font-size: 11.5px;" onclick="closeCustomerWarningModal()">I Understand & Proceed to Pay</button>
         </div>
     </div>
 
@@ -741,8 +819,8 @@
     <div class="modal-overlay" id="congratsModal">
         <div class="modal">
             <div class="congrats-badge-circle" id="congratsIcon">🎉</div>
-            <h3 id="congratsTitle" style="color: #15803d; font-size: 18px; font-weight: 800;">Payment Successful!</h3>
-            <p id="congratsSub" style="font-weight: 600; color: #334155; margin-bottom: 6px; font-size: 11.5px;">Verified & Recorded in Permanent Ledger</p>
+            <h3 id="congratsTitle" style="color: #15803d; font-size: 17px; font-weight: 800;">Payment Successful!</h3>
+            <p id="congratsSub" style="font-weight: 600; color: #334155; margin-bottom: 5px; font-size: 11px;">Verified & Recorded in Permanent Ledger</p>
             
             <div class="congrats-receipt-box">
                 <div class="congrats-receipt-row">
@@ -759,7 +837,7 @@
                 </div>
                 <div class="congrats-receipt-row">
                     <span style="color:#64748b;">Amount Paid:</span>
-                    <strong id="cgAmount" style="color:#15803d; font-size:13px;">₹0.00</strong>
+                    <strong id="cgAmount" style="color:#15803d; font-size:12.5px;">₹0.00</strong>
                 </div>
                 <div class="congrats-receipt-row">
                     <span style="color:#64748b;">Fine Status:</span>
@@ -781,24 +859,24 @@
     <div class="modal-overlay" id="phoneLoginModal" style="display: none;">
         <div class="modal">
             <h3 style="color: var(--dark-blue);">🔑 Officer / Agent Login</h3>
-            <p style="font-size: 11px; color: var(--text-muted);">Enter registered mobile number or security PIN:</p>
+            <p style="font-size: 10.5px; color: var(--text-muted);">Enter registered mobile number or security PIN:</p>
             
-            <input type="tel" id="agentPhoneInput" class="form-control" placeholder="Enter PIN / Mobile" style="text-align: center; font-size: 14.5px; font-weight: 700; margin-bottom: 10px; letter-spacing: 2px;">
+            <input type="tel" id="agentPhoneInput" class="form-control" placeholder="Enter PIN / Mobile" style="text-align: center; font-size: 14px; font-weight: 700; margin-bottom: 8px; letter-spacing: 2px;">
             
             <button class="btn btn-primary" onclick="loginWithPhoneNo()">🚀 Instant Login</button>
-            <button class="btn btn-secondary" style="margin-top: 5px;" onclick="closeAllModals()">Cancel</button>
+            <button class="btn btn-secondary" style="margin-top: 4px;" onclick="closeAllModals()">Cancel</button>
         </div>
     </div>
 
     <!-- ZOOMABLE LINK QR MODAL -->
     <div class="zoom-qr-modal" id="zoomQrModal" onclick="closeZoomedQrModal()">
         <div class="zoom-qr-box" onclick="event.stopPropagation()">
-            <h3 style="color: var(--dark-blue); font-size: 16px; margin-bottom: 3px;">🔍 High-Res Scannable QR</h3>
-            <p style="font-size: 10px; color: var(--text-muted); margin-bottom: 8px;">Scan with PhonePe, GPay or any UPI app:</p>
+            <h3 style="color: var(--dark-blue); font-size: 15px; margin-bottom: 3px;">🔍 High-Res Scannable QR</h3>
+            <p style="font-size: 9.5px; color: var(--text-muted); margin-bottom: 6px;">Scan with PhonePe, GPay or any UPI app:</p>
             <img id="zoomedQrImage" src="" alt="Zoomed Link QR Code">
-            <div id="zoomedQrUrlText" style="font-size: 9.5px; font-family: monospace; color: #166534; background: #f0fdf4; padding: 5px; border-radius: 5px; margin: 8px 0; word-break: break-all; border: 1px solid #bbf7d0; max-height: 50px; overflow-y: auto;"></div>
-            <button class="btn btn-success" style="padding: 8px; font-size: 11px; margin-top: 6px;" onclick="copyGeneratedLink()">📋 Copy Encrypted Link</button>
-            <button class="btn btn-secondary" style="padding: 7px; font-size: 11px; margin-top: 5px;" onclick="closeZoomedQrModal()">Close Zoom</button>
+            <div id="zoomedQrUrlText" style="font-size: 9px; font-family: monospace; color: #166534; background: #f0fdf4; padding: 4px; border-radius: 4px; margin: 6px 0; word-break: break-all; border: 1px solid #bbf7d0; max-height: 45px; overflow-y: auto;"></div>
+            <button class="btn btn-success" style="padding: 7px; font-size: 10.5px; margin-top: 5px;" onclick="copyGeneratedLink()">📋 Copy Encrypted Link</button>
+            <button class="btn btn-secondary" style="padding: 6px; font-size: 10.5px; margin-top: 4px;" onclick="closeZoomedQrModal()">Close Zoom</button>
         </div>
     </div>
 
@@ -843,7 +921,7 @@
 
     <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 16px;">
         <div style="display: flex; gap: 12px; align-items: center;">
-            <div style="width: 52px; height: 52px; border-radius: 50%; background: #002060; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 22px;">₹</div>
+            <div style="width: 50px; height: 50px; border-radius: 50%; background: #002060; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 20px;">₹</div>
             <div style="font-size: 11px; line-height: 1.5;">
                 <strong style="font-size: 14px;" id="printCustName">CUSTOMER NAME</strong><br>
                 <span>Loan Account ID: <strong id="printLoanId">BDFL-LOAN</strong></span><br>
@@ -939,7 +1017,7 @@
         <div>
             <br><br>
             <strong>(Authorized Signatory)</strong><br>
-            Bharat Digital Finance Limited Legal Cell
+            Bharat Digital Finance Legal Cell
         </div>
         <div style="text-align: right;">
             <div style="border: 1px solid #000; width: 120px; height: 44px; margin-left: auto; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; font-size: 9.5px; color: #64748b;">SEAL / STAMP</div>
@@ -950,10 +1028,10 @@
 </div>
 
 <script>
-    const STORAGE_KEY_DB = "BDFL_ENTERPRISE_CUSTOMERS_V29";
-    const STORAGE_KEY_CFG = "BDFL_ENTERPRISE_CONFIG_V29";
-    const STORAGE_KEY_LOCK = "BDFL_CUSTOMER_LOCK_V29";
-    const STORAGE_KEY_FIRST_LINK = "BDFL_FIRST_LINK_PAYLOAD_V29";
+    const STORAGE_KEY_DB = "BDFL_ENTERPRISE_CUSTOMERS_V33";
+    const STORAGE_KEY_CFG = "BDFL_ENTERPRISE_CONFIG_V33";
+    const STORAGE_KEY_LOCK = "BDFL_CUSTOMER_LOCK_V33";
+    const STORAGE_KEY_FIRST_LINK = "BDFL_FIRST_LINK_PAYLOAD_V33";
     const CIPHER_SECRET_KEY = "BDFL#2026$CHANDAN@9733322375!KEY";
     const DEFAULT_COMPANY_MOBILE = "9733322375";
     const DEFAULT_UPI_ID = "Q064772617@ybl";
@@ -1351,7 +1429,7 @@
             div.className = `memory-item ${idx === activeCustomerIndex ? 'selected' : ''}`;
             div.innerHTML = `
                 <div class="mem-left" onclick="selectCustomerFromMemory(${idx})">
-                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #002060; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 14px;">₹</div>
+                    <div style="width: 30px; height: 30px; border-radius: 50%; background: #002060; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 13px;">₹</div>
                     <div class="mem-info">
                         <h4>${cust.name}</h4>
                         <p>${cust.loanId} •${cust.phone} • Paid: ${paidCount}/${cust.installments.length}</p>
@@ -1741,26 +1819,8 @@
         document.getElementById('zoomQrModal').style.display = 'none';
     }
 
-    function openZoomedUpiQrModal() {
-        if(customersDB.length === 0) return;
-        const c = getActiveCustomer();
-        const fineAmt = parseFloat(c.fine) || 0;
-        const minPayable = isFineOnlyMode ? fineAmt : (c.fineSelected ? (c.emi + fineAmt) : c.emi);
-        const finalAmt = customPayOverride !== null ? Math.max(minPayable, customPayOverride) : minPayable;
-        
-        const agentName = c.agentName || "Chandan Das";
-        const paymentNote = `EMI-${c.loanId}-${c.name}-Ag:${agentName}`;
-        
-        const upiUri = `upi://pay?pa=${systemConfig.upiId}&pn=${encodeURIComponent(systemConfig.brandTitle)}&am=${finalAmt}.00&cu=INR&tn=${encodeURIComponent(paymentNote)}`;
-        const bigUpiQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(upiUri)}`;
-        
-        document.getElementById('zoomedQrImage').src = bigUpiQrUrl;
-        document.getElementById('zoomedQrUrlText').textContent = `Note: ${paymentNote} \vert{} UPI:${systemConfig.upiId}`;
-        document.getElementById('zoomQrModal').style.display = 'flex';
-    }
-
-    /* HTML5 Canvas Branded QR Download Function (Matches Screenshot) */
-    function downloadBrandedCanvasQr() {
+    /* Pay Now Action with Direct App Chooser Popup */
+    function triggerUpiPaymentApp() {
         if(customersDB.length === 0) return;
         const c = getActiveCustomer();
         const fineAmt = parseFloat(c.fine) || 0;
@@ -1768,77 +1828,17 @@
         const finalAmt = customPayOverride !== null ? Math.max(minPayable, customPayOverride) : minPayable;
         const agentName = c.agentName || "Chandan Das";
         const paymentNote = `EMI-${c.loanId}-${c.name}-Ag:${agentName}`;
+
         const upiUri = `upi://pay?pa=${systemConfig.upiId}&pn=${encodeURIComponent(systemConfig.brandTitle)}&am=${finalAmt}.00&cu=INR&tn=${encodeURIComponent(paymentNote)}`;
-
-        const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=${encodeURIComponent(upiUri)}`;
         
-        const qrImage = new Image();
-        qrImage.crossOrigin = "anonymous";
-        qrImage.src = qrApiUrl;
-        qrImage.onload = function() {
-            const canvas = document.createElement('canvas');
-            canvas.width = 500;
-            canvas.height = 680;
-            const ctx = canvas.getContext('2d');
+        document.getElementById('chooserAmountText').textContent = `₹${finalAmt.toLocaleString('en-IN')}`;
+        document.getElementById('appLinkPhonePe').href = `phonepe://pay?pa=${systemConfig.upiId}&pn=${encodeURIComponent(systemConfig.brandTitle)}&am=${finalAmt}.00&cu=INR&tn=${encodeURIComponent(paymentNote)}`;
+        document.getElementById('appLinkGPay').href = `tez://upi/pay?pa=${systemConfig.upiId}&pn=${encodeURIComponent(systemConfig.brandTitle)}&am=${finalAmt}.00&cu=INR&tn=${encodeURIComponent(paymentNote)}`;
+        document.getElementById('appLinkPaytm').href = `paytmmp://pay?pa=${systemConfig.upiId}&pn=${encodeURIComponent(systemConfig.brandTitle)}&am=${finalAmt}.00&cu=INR&tn=${encodeURIComponent(paymentNote)}`;
+        document.getElementById('appLinkBhim').href = upiUri;
 
-            // Background White
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // PhonePe Style Top Header (Purple)
-            ctx.fillStyle = "#5f259f";
-            ctx.fillRect(0, 0, canvas.width, 70);
-
-            ctx.fillStyle = "#ffffff";
-            ctx.font = "bold 24px Arial";
-            ctx.textAlign = "center";
-            ctx.fillText("पे PhonePe", canvas.width / 2, 43);
-
-            // Subtitle
-            ctx.fillStyle = "#334155";
-            ctx.font = "bold 15px Arial";
-            ctx.fillText("Scan & Pay with any UPI App", canvas.width / 2, 110);
-
-            // QR Border Frame
-            ctx.strokeStyle = "#cbd5e1";
-            ctx.lineWidth = 2;
-            ctx.strokeRect(75, 130, 350, 350);
-
-            // Draw QR Code
-            ctx.drawImage(qrImage, 90, 145, 320, 320);
-
-            // UPI ID Text
-            ctx.fillStyle = "#0f172a";
-            ctx.font = "bold 16px Arial";
-            ctx.fillText(`UPI ID : ${systemConfig.upiId}`, canvas.width / 2, 510);
-
-            // BHIM | UPI Footer text representation
-            ctx.fillStyle = "#1e293b";
-            ctx.font = "900 22px Arial";
-            ctx.fillText("BHIM►", 195, 550);
-            ctx.fillStyle = "#cbd5e1";
-            ctx.fillRect(265, 532, 2, 24);
-            ctx.fillStyle = "#003399";
-            ctx.font = "bold 20px Arial";
-            ctx.fillText("UPI►", 295, 550);
-
-            // Bottom Company Title Branding matching screenshot
-            ctx.fillStyle = "#002060";
-            ctx.font = "bold 20px Arial";
-            ctx.fillText("Bharat Digital Finance Limited", canvas.width / 2, 600);
-
-            // Bottom Sub-tag
-            ctx.fillStyle = "#64748b";
-            ctx.font = "12px Arial";
-            ctx.fillText(`Loan ID: ${c.loanId} \vert{} Payable: ₹${finalAmt}.00`, canvas.width / 2, 635);
-
-            // Trigger Download
-            const link = document.createElement('a');
-            link.download = `BDFL_Branded_QR_${c.loanId}.png`;
-            link.href = canvas.toDataURL("image/png");
-            link.click();
-            showToast("📥 Branded QR Downloaded Successfully!");
-        };
+        // Open app chooser modal
+        document.getElementById('upiAppChooserModal').style.display = 'flex';
     }
 
     function openAgreementModal(e) {
@@ -1867,6 +1867,21 @@
 
     function closeCustomerWarningModal() {
         document.getElementById('customerWarningDemandModal').style.display = 'none';
+    }
+
+    function switchBajajTab(tabName, el) {
+        document.querySelectorAll('.bajaj-tab').forEach(t => t.classList.remove('active'));
+        if (el) el.classList.add('active');
+        showToast(`📂 Switched to ${tabName} view`);
+    }
+
+    function toggleAccordion(headerEl) {
+        const content = headerEl.nextElementSibling;
+        const isOpen = content.classList.contains('open');
+        document.querySelectorAll('.accordion-content').forEach(c => c.classList.remove('open'));
+        if (!isOpen) {
+            content.classList.add('open');
+        }
     }
 
     function renderDashboardView() {
@@ -1916,22 +1931,33 @@
             c.fineSelected = true;
         }
 
-        document.getElementById('dashName').textContent = c.name;
-        document.getElementById('dashPhone').textContent = c.phone;
-        document.getElementById('dashLoanId').textContent = `Loan ID: ${c.loanId}`;
+        document.getElementById('bajajProductTitle').textContent = `PERSONAL LOAN - ${c.name}`;
+        document.getElementById('dashLoanId').textContent = c.loanId;
         document.getElementById('dashAddress').textContent = `📍 ${c.address}`;
         document.getElementById('dashAgentName').textContent = c.agentName || "Chandan Das";
         document.getElementById('feedbackAgentName').textContent = c.agentName || "Chandan Das";
+        document.getElementById('accCoName').textContent = c.name;
+        document.getElementById('accBankUpi').textContent = systemConfig.upiId;
 
         const totalSanctioned = c.installments.reduce((sum, i) => sum + (parseFloat(i.amount) || 0), 0);
         const totalCollected = c.installments
             .filter(i => i.status === 'Collected')
             .reduce((sum, i) => sum + (parseFloat(i.amount) || 0), 0);
+        const remainingAmt = Math.max(0, totalSanctioned - totalCollected);
+        const paidEmisCount = c.installments.filter(i => i.status === 'Collected').length;
+        const pendingEmisCount = c.installments.length - paidEmisCount;
 
         document.getElementById('dashTotalAmount').textContent = `₹ ${totalSanctioned.toLocaleString('en-IN')}`;
         document.getElementById('dashCollectedAmount').textContent = `₹ ${totalCollected.toLocaleString('en-IN')}`;
         document.getElementById('dashInstCount').textContent = c.installments.length;
         document.getElementById('dashTotalRight').textContent = `₹${totalSanctioned.toLocaleString('en-IN')}`;
+
+        document.getElementById('progPaidAmt').textContent = `₹${totalCollected.toLocaleString('en-IN')}`;
+        document.getElementById('progRemainAmt').textContent = `₹${remainingAmt.toLocaleString('en-IN')}`;
+        const pct = totalSanctioned > 0 ? Math.round((totalCollected / totalSanctioned) * 100) : 0;
+        document.getElementById('loanProgressFill').style.width = pct + '%';
+        document.getElementById('metaTenure').textContent = `${c.installments.length} months`;
+        document.getElementById('metaEmisCount').textContent = `${paidEmisCount} paid / ${pendingEmisCount} pending`;
 
         const listContainer = document.getElementById('dashboardInstallmentList');
         listContainer.innerHTML = "";
@@ -2003,8 +2029,8 @@
                 warnBox.classList.remove('active');
             } else {
                 fineBoxContainer.style.display = "block";
-                btnWithFine.innerHTML = `✅ Select ₹${fineAmt} Fine<br><span style="font-size:9px; font-weight:600;">(Protects CIBIL Score)</span>`;
-                btnWithoutFine.innerHTML = `❌ Deselect Fine (₹0)<br><span style="font-size:9px; font-weight:600;">(EMI Only - CIBIL Risk)</span>`;
+                btnWithFine.innerHTML = `✅ Select ₹${fineAmt} Fine<br><span style="font-size:8.5px; font-weight:600;">(Protects CIBIL Score)</span>`;
+                btnWithoutFine.innerHTML = `❌ Deselect Fine (₹0)<br><span style="font-size:8.5px; font-weight:600;">(EMI Only - CIBIL Risk)</span>`;
                 warnBox.innerHTML = `⚠️ <strong>CIBIL & Legal Warning:</strong> Deselecting the ₹${fineAmt} bounce fine keeps your loan account in default arrears and impacts CIBIL score.`;
                 
                 if (c.fineSelected) {
@@ -2036,19 +2062,10 @@
             document.getElementById('breakdownTotal').textContent = `₹${customPayOverride.toFixed(2)}`;
         }
 
-        const finalPayableAmt = Math.max(minimumPayable, customPayOverride);
-        
-        const agentName = c.agentName || "Chandan Das";
-        const paymentNote = `EMI-${c.loanId}-${c.name}-Ag:${agentName}`;
-
-        const upiUri = `upi://pay?pa=${systemConfig.upiId}&pn=${encodeURIComponent(systemConfig.brandTitle)}&am=${finalPayableAmt}.00&cu=INR&tn=${encodeURIComponent(paymentNote)}`;
         document.getElementById('dashUpiIdText').textContent = systemConfig.upiId;
-        document.getElementById('upiBtnAmountText').textContent = `₹${finalPayableAmt.toLocaleString('en-IN')}`;
-        document.getElementById('dynamicQrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(upiUri)}`;
-        document.getElementById('directUpiAppBtn').href = upiUri;
 
         const portalLinkUrl = buildCustomerPortalUrl();
-        const linkQrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(portalUrl)}`;
+        const linkQrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(portalLinkUrl)}`;
         const dashLinkQr = document.getElementById('dashPortalLinkQrImg');
         if (dashLinkQr) dashLinkQr.src = linkQrApiUrl;
 
@@ -2066,7 +2083,6 @@
         showToast(includeFine ? `✅ ₹${fineAmt} Fine Selected` : "⚠️ Fine Deselected");
     }
 
-    /* Full Amount Single Select Logic */
     function setAdvanceEmiMultiplier(count) {
         if(customersDB.length === 0 || isFineOnlyMode) return;
         const c = getActiveCustomer();
@@ -2074,7 +2090,6 @@
         const fineAmt = c.fineSelected ? (parseFloat(c.fine) || 500) : 0;
         
         if (count === 0) {
-            // Full Amount / Full Close Sum Calculation
             const unpaidTotal = c.installments.filter(i => i.status !== 'Collected').reduce((s, i) => s + (parseFloat(i.amount)||baseEmi), 0);
             customPayOverride = Math.max(baseEmi + fineAmt, unpaidTotal + fineAmt);
             showToast(`🔥 Full Amount Set: ₹${customPayOverride.toLocaleString('en-IN')}`);
@@ -2300,7 +2315,6 @@
         document.getElementById('printFineStatus').textContent = c.fineSelected ? `₹${fineAmt}.00 (Included)` : `₹${fineAmt}.00 (Unpaid)`;
         document.getElementById('printCurrentDue').textContent = `₹${currentDue.toLocaleString('en-IN')}.00`;
 
-        document.getElementById('printUpiQrImg').src = document.getElementById('dynamicQrImg').src;
         const portalUrl = buildCustomerPortalUrl();
         document.getElementById('printPortalLinkQrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(portalUrl)}`;
 
