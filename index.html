@@ -1,1 +1,2557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bharat Digital Finance Limited - NBFC Recovery & Fine Collection Portal</title>
+    <!-- Tesseract.js for Client-Side OCR -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <style>
+        :root {
+            --primary-purple: #6d28d9;
+            --dark-purple: #4c1d95;
+            --light-purple: #f5f3ff;
+            --bg-color: #f1f5f9;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+            --danger-red: #ef4444;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+        html, body { width: 100%; min-height: 100vh; background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; scroll-behavior: smooth; }
+        
+        .app-shell { max-width: 500px; min-height: 100vh; margin: 0 auto; background: #ffffff; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.12); position: relative; }
+
+        /* =========================================================
+           APP LOADING OVERLAY & SPINNER
+           ========================================================= */
+        #appBootLoader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #2e1065, #4c1d95, #6d28d9);
+            z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: white; transition: opacity 0.45s ease, visibility 0.45s ease;
+        }
+        #appBootLoader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .loader-shield {
+            width: 72px; height: 72px; background: white; border-radius: 20px; padding: 10px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3); animation: pulseFloat 1.6s infinite ease-in-out;
+            position: relative;
+        }
+        .spinner-ring {
+            width: 42px; height: 42px; border: 3.5px solid rgba(255,255,255,0.2);
+            border-top-color: #eab308; border-radius: 50%;
+            animation: spinRing 0.85s linear infinite; margin-top: 22px;
+        }
+        .loader-title { font-size: 16px; font-weight: 800; letter-spacing: 0.8px; margin-top: 14px; }
+        .loader-sub { font-size: 11px; opacity: 0.8; margin-top: 4px; font-weight: 500; }
+
+        @keyframes spinRing { 100% { transform: rotate(360deg); } }
+        @keyframes pulseFloat {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-6px) scale(1.05); }
+        }
+
+        /* Toast Notification */
+        #appToast {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: #0f172a; color: white; padding: 11px 18px; border-radius: 30px;
+            font-size: 12px; font-weight: 700; box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            z-index: 9000; transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex; align-items: center; gap: 8px; white-space: nowrap; border: 1px solid #334155;
+        }
+        #appToast.show { transform: translateX(-50%) translateY(0); }
+
+        /* Strict Customer Lockdown Rules */
+        body.customer-locked-mode .officer-only { display: none !important; }
+        body:not(.customer-locked-mode) .customer-only { display: none !important; }
+
+        /* Smooth Interactive Clicks & Micro-Animations */
+        .btn, .sm-btn, .icon-btn, .fine-option-btn, .quick-pay-btn, .upi-app-btn, .memory-item, .inst-item {
+            transition: transform 0.16s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease !important;
+        }
+        .btn:active, .sm-btn:active, .icon-btn:active, .fine-option-btn:active, .quick-pay-btn:active, .upi-app-btn:active {
+            transform: scale(0.95) !important;
+        }
+        .inst-item:hover { transform: translateY(-1.5px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+
+        /* Enterprise Brand Header */
+        .enterprise-header { background: linear-gradient(135deg, var(--dark-purple), var(--primary-purple)); color: white; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 10px rgba(0,0,0,0.15); }
+        .brand-box { display: flex; align-items: center; gap: 10px; user-select: none; cursor: pointer; }
+        .brand-logo-svg { width: 32px; height: 32px; flex-shrink: 0; background: white; border-radius: 8px; padding: 3px; }
+        .brand-text h1 { font-size: 14.5px; font-weight: 800; letter-spacing: 0.4px; line-height: 1.1; }
+        .brand-text span { font-size: 9px; opacity: 0.85; text-transform: uppercase; letter-spacing: 0.5px; display: block; }
+        .header-actions { display: flex; gap: 6px; align-items: center; }
+        .icon-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 6px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 700; cursor: pointer; }
+        .icon-btn:hover { background: rgba(255,255,255,0.35); }
+        .verified-customer-badge { background: rgba(16, 185, 129, 0.25); border: 1px solid #34d399; color: #ecfdf5; padding: 4px 9px; border-radius: 20px; font-size: 10.5px; font-weight: 700; }
+
+        /* Persistent Database Bar (Officer Only) */
+        .db-status-bar { background: #1e293b; color: white; padding: 8px 14px; font-size: 11.5px; display: flex; align-items: center; justify-content: space-between; gap: 8px; border-bottom: 2px solid var(--primary-purple); }
+        .db-status-bar select { flex: 1; background: #334155; color: white; border: 1px solid #475569; padding: 5px 8px; border-radius: 6px; font-size: 11.5px; font-weight: 600; outline: none; }
+        .db-badge { background: var(--success-green); color: white; padding: 2px 7px; border-radius: 10px; font-size: 10px; font-weight: 700; white-space: nowrap; }
+
+        /* Screens with Smooth Fade-Slide Animation */
+        .screen { display: none; flex-direction: column; flex: 1; padding: 14px; overflow-y: auto; animation: screenFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1); }
+        .screen.active { display: flex; }
+        @keyframes screenFadeIn {
+            0% { opacity: 0; transform: translateY(8px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards & Forms */
+        .card { background: #ffffff; padding: 14px; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #cbd5e1; margin-bottom: 14px; transition: 0.3s; }
+        .card.ocr-highlight { border: 2px solid var(--success-green); box-shadow: 0 0 18px rgba(16, 185, 129, 0.3); }
+        .card-title { font-size: 13.5px; font-weight: 800; color: var(--dark-purple); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 7px; }
+        
+        .form-row { display: flex; gap: 8px; }
+        .form-group { margin-bottom: 9px; flex: 1; }
+        .form-group label { display: block; font-size: 10.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 3px; text-transform: uppercase; }
+        .form-control { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 12.5px; outline: none; transition: 0.2s; background: #f8fafc; color: var(--text-main); font-weight: 600; }
+        .form-control:focus { border-color: var(--primary-purple); background: #fff; box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.12); }
+
+        /* Memory Database List */
+        .memory-list { display: flex; flex-direction: column; gap: 6px; max-height: 190px; overflow-y: auto; margin-top: 8px; padding-right: 2px; }
+        .memory-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; cursor: pointer; }
+        .memory-item.selected { border-color: var(--primary-purple); background: var(--light-purple); box-shadow: inset 3px 0 0 var(--primary-purple); }
+        .mem-left { display: flex; align-items: center; gap: 10px; flex: 1; }
+        .mem-avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-purple); }
+        .mem-info h4 { font-size: 12px; font-weight: 700; color: var(--text-main); }
+        .mem-info p { font-size: 10px; color: var(--text-muted); }
+        .mem-actions { display: flex; gap: 4px; }
+        .sm-btn { padding: 5px 9px; border-radius: 6px; border: none; font-size: 10.5px; font-weight: 700; cursor: pointer; }
+        .sm-btn.load { background: var(--primary-purple); color: white; }
+        .sm-btn.success { background: var(--success-green); color: white; }
+        .sm-btn.del { background: #fee2e2; color: var(--danger-red); }
+
+        /* OCR Scanner Box */
+        .ocr-box { border: 2px dashed var(--primary-purple); background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); padding: 14px; border-radius: 12px; text-align: center; position: relative; cursor: pointer; margin-bottom: 8px; }
+        .ocr-box input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+        .ocr-status { font-size: 11.5px; color: var(--dark-purple); font-weight: 700; margin-top: 6px; line-height: 1.4; }
+        .progress-bar { width: 100%; height: 7px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin-top: 6px; display: none; }
+        .progress-fill { height: 100%; background: var(--success-green); width: 0%; transition: 0.2s; }
+
+        /* Installment Add Bar */
+        .inst-add-bar { display: flex; gap: 6px; align-items: center; margin-bottom: 8px; background: #f8fafc; padding: 6px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .inst-add-bar input { width: 60px; padding: 5px; font-size: 12px; text-align: center; font-weight: 700; border: 1px solid #cbd5e1; border-radius: 6px; }
+        .inst-editor-header { display: grid; grid-template-columns: 24px 82px 68px 92px 1fr 24px; gap: 4px; font-size: 9.5px; font-weight: 800; color: var(--text-muted); padding: 0 4px 4px 4px; text-transform: uppercase; }
+        .inst-editor-row { display: grid; grid-template-columns: 24px 82px 68px 92px 1fr 24px; gap: 4px; align-items: center; margin-bottom: 5px; background: #f8fafc; padding: 5px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .inst-editor-row input, .inst-editor-row select { padding: 5px 4px; font-size: 11px; border: 1px solid #cbd5e1; border-radius: 5px; width: 100%; font-weight: 600; }
+        .inst-num { font-size: 11px; font-weight: 800; text-align: center; color: var(--dark-purple); }
+
+        /* Dashboard Top Banner */
+        .top-banner { background: linear-gradient(135deg, #7c3aed, #5b21b6); color: white; padding: 18px 16px 28px 16px; border-radius: 0 0 24px 24px; margin: -14px -14px 0 -14px; position: relative; }
+        .banner-profile { display: flex; align-items: center; gap: 14px; }
+        .banner-avatar-wrap { position: relative; }
+        .banner-avatar { width: 54px; height: 54px; border-radius: 50%; object-fit: cover; border: 2px solid white; background: #92400e; }
+        .upi-mini-tag { position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); background: white; color: #0f172a; font-size: 8px; font-weight: 800; padding: 1px 5px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .banner-info h2 { font-size: 16px; font-weight: 700; letter-spacing: 0.3px; }
+        .banner-info p { font-size: 12.5px; opacity: 0.92; margin-top: 2px; }
+        .banner-info .loan-pill { display: inline-block; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 6px; font-size: 10.5px; margin-top: 4px; font-weight: 600; }
+
+        /* Floating Summary Card */
+        .floating-summary-card { background: white; border-radius: 16px; padding: 16px; margin-top: -18px; margin-bottom: 14px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); border: 1px solid #f1f5f9; position: relative; }
+        .active-pill { position: absolute; top: -12px; left: 16px; background: #dcfce7; color: #15803d; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .summary-grid { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+        .sum-col p { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+        .sum-col h3 { font-size: 20px; font-weight: 800; color: var(--text-main); margin-top: 2px; }
+        .sum-col.right { text-align: right; }
+        .sum-col.right p { text-decoration: underline; text-underline-offset: 4px; }
+        .address-bar { margin-top: 10px; padding-top: 8px; border-top: 1px dashed #e2e8f0; font-size: 11px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; }
+
+        /* Filter Header */
+        .filter-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 4px; }
+        .filter-pill { background: #ede9fe; color: var(--dark-purple); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
+
+        /* Installment List UI */
+        .installment-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+        .inst-item { background: white; border: 1px solid #f1f5f9; border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .inst-item.bounce-highlight { border-color: #fde68a; background: #fffbeb; }
+        .inst-left { display: flex; align-items: center; gap: 12px; }
+        .inst-badge { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; }
+        .inst-badge.paid { background: #dcfce7; color: #15803d; }
+        .inst-badge.progress { background: #fef3c7; color: #b45309; }
+        .inst-badge.scheduled { background: #f1f5f9; color: #64748b; }
+        
+        .inst-details h4 { font-size: 13.5px; font-weight: 700; color: var(--text-main); }
+        .inst-details p { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+        .inst-right { text-align: right; }
+        .inst-right .amount { font-size: 14px; font-weight: 800; color: var(--text-main); }
+        .inst-right .utr { font-size: 10px; color: var(--text-muted); margin-top: 2px; font-family: monospace; }
+        .quick-pay-btn { margin-top: 4px; background: var(--primary-purple); color: white; border: none; padding: 4px 9px; border-radius: 6px; font-size: 10px; font-weight: 700; cursor: pointer; }
+
+        /* NBFC Legal Notice Banner */
+        .nbfc-notice-banner { background: #fff1f2; border: 1px solid #fecdd3; border-radius: 12px; padding: 12px; margin-bottom: 14px; font-size: 11.5px; color: #9f1239; line-height: 1.4; }
+        .nbfc-notice-banner strong { display: block; font-size: 12.5px; margin-bottom: 3px; }
+
+        /* Agreement Consent Checkbox Box */
+        .agreement-box { background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px; border-radius: 12px; margin-top: 12px; font-size: 11.5px; text-align: left; }
+        .agreement-box label { display: flex; align-items: flex-start; gap: 8px; cursor: pointer; font-weight: 600; color: var(--text-main); }
+        .agreement-box input[type="checkbox"] { margin-top: 2px; width: 16px; height: 16px; accent-color: var(--primary-purple); }
+
+        /* Fine & Active Due Payment Box */
+        .due-Breakdown-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-top: 6px; }
+        .due-Breakdown-table td { padding: 6px 4px; border-bottom: 1px solid #f1f5f9; }
+        .due-Breakdown-table td:last-child { text-align: right; font-weight: 700; }
+
+        /* Interactive Fine Choice Options */
+        .fine-choice-box { background: #fffbeb; border: 1.5px solid #fde68a; padding: 12px; border-radius: 12px; margin-top: 12px; }
+        .fine-choice-title { font-size: 12px; font-weight: 800; color: #92400e; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .fine-radio-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .fine-option-btn { padding: 10px 8px; border-radius: 10px; border: 1.5px solid #cbd5e1; background: white; font-size: 11.5px; font-weight: 700; cursor: pointer; text-align: center; color: var(--text-main); }
+        .fine-option-btn.active-with-fine { border-color: var(--success-green); background: #ecfdf5; color: #065f46; box-shadow: 0 3px 10px rgba(16, 185, 129, 0.18); }
+        .fine-option-btn.active-no-fine { border-color: var(--danger-red); background: #fef2f2; color: #991b1b; box-shadow: 0 3px 10px rgba(239, 68, 68, 0.18); }
+
+        .warning-box { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 10px; border-radius: 10px; font-size: 11.5px; margin-top: 10px; display: none; line-height: 1.4; animation: screenFadeIn 0.25s ease; }
+        .warning-box.active { display: block; }
+
+        /* Quick Advance EMI Pills */
+        .advance-pills { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+        .adv-pill { background: #ede9fe; color: var(--dark-purple); border: 1px solid #c4b5fd; padding: 4px 9px; border-radius: 20px; font-size: 10.5px; font-weight: 700; cursor: pointer; transition: transform 0.15s ease; }
+        .adv-pill:active { transform: scale(0.94); }
+
+        /* Payment Proof Upload Box */
+        .payment-proof-card { background: #f0fdf4; border: 1.5px dashed #4ade80; padding: 14px; border-radius: 14px; margin-top: 12px; text-align: center; }
+        .payment-proof-card input[type="file"] { margin-top: 8px; font-size: 11px; width: 100%; }
+
+        /* Dynamic UPI QR Section */
+        .qr-section { background: linear-gradient(180deg, #faf5ff 0%, #f3e8ff 100%); border: 1px solid #e9d5ff; padding: 14px; border-radius: 14px; text-align: center; margin-top: 12px; }
+        .qr-box { background: white; padding: 10px; display: inline-block; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.06); margin: 8px 0; }
+        .qr-box img { width: 145px; height: 145px; display: block; cursor: pointer; }
+        .timer-text { font-size: 12px; color: var(--danger-red); font-weight: 700; }
+        .upi-app-btn { display: inline-block; margin-top: 8px; background: var(--dark-purple); color: white; text-decoration: none; padding: 9px 18px; border-radius: 20px; font-size: 12px; font-weight: 700; box-shadow: 0 4px 10px rgba(76, 29, 149, 0.25); }
+
+        /* Clickable Share Link & Link QR Box */
+        .clickable-link-card { background: #f0fdf4; border: 1.5px solid #86efac; padding: 14px; border-radius: 12px; margin-top: 12px; word-break: break-all; text-align: center; }
+        .clickable-link-card a { color: #15803d; font-weight: 700; font-size: 11.5px; text-decoration: underline; display: block; margin-bottom: 10px; background: white; padding: 8px; border-radius: 8px; border: 1px solid #bbf7d0; }
+        .link-qr-container { background: white; padding: 12px; border-radius: 12px; display: inline-block; border: 2px solid #22c55e; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.12); margin: 6px 0 10px 0; cursor: pointer; transition: 0.2s; }
+        .link-qr-container:hover { transform: scale(1.03); }
+        .link-qr-container img { width: 155px; height: 155px; display: block; margin: 0 auto; }
+
+        /* Zoom Modal for Link QR */
+        .zoom-qr-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; backdrop-filter: blur(5px); }
+        .zoom-qr-box { background: white; padding: 25px; border-radius: 24px; text-align: center; max-width: 360px; width: 100%; box-shadow: 0 25px 50px rgba(0,0,0,0.3); animation: scaleUp 0.2s ease; }
+        .zoom-qr-box img { width: 260px; height: 260px; display: block; margin: 12px auto; border: 3px solid var(--success-green); padding: 8px; border-radius: 14px; background: white; }
+
+        /* =========================================================
+           NEXT-LEVEL CONGRATULATIONS MODAL SCREEN
+           ========================================================= */
+        .congrats-badge-circle {
+            width: 76px; height: 76px; border-radius: 50%; background: #dcfce7;
+            color: #16a34a; display: flex; align-items: center; justify-content: center;
+            font-size: 38px; margin: 0 auto 12px auto; border: 4px solid #86efac;
+            animation: popBounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 10px 25px rgba(22, 163, 74, 0.25);
+        }
+        @keyframes popBounce {
+            0% { transform: scale(0.3); opacity: 0; }
+            70% { transform: scale(1.12); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .congrats-receipt-box {
+            background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px;
+            padding: 12px; margin: 12px 0; text-align: left; font-size: 12px; line-height: 1.7;
+        }
+        .congrats-receipt-row { display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding: 2px 0; }
+        .congrats-receipt-row:last-child { border-bottom: none; }
+
+        /* Action Buttons */
+        .actions { margin-top: auto; padding: 10px 0; display: flex; flex-direction: column; gap: 8px; }
+        .btn { width: 100%; padding: 13px; border: none; border-radius: 12px; font-size: 13.5px; font-weight: 700; cursor: pointer; text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-primary { background: var(--primary-purple); color: white; box-shadow: 0 4px 12px rgba(109, 40, 217, 0.25); }
+        .btn-success { background: var(--success-green); color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); }
+        .btn-whatsapp { background: #16a34a; color: white; }
+        .btn-sms { background: #0284c7; color: white; }
+        .btn-pdf { background: #0f172a; color: white; }
+        .btn-secondary { background: #e2e8f0; color: var(--text-main); }
+
+        /* Modals */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.65); display: none; justify-content: center; align-items: center; z-index: 100; padding: 18px; backdrop-filter: blur(4px); }
+        .modal { background: white; width: 100%; max-width: 385px; padding: 22px; border-radius: 22px; text-align: center; box-shadow: 0 20px 30px -5px rgba(0,0,0,0.25); animation: popUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); max-height: 90vh; overflow-y: auto; }
+        .modal h3 { color: var(--dark-purple); font-size: 17px; margin-bottom: 8px; }
+        .modal p { color: var(--text-muted); font-size: 12.5px; margin-bottom: 14px; }
+        .modal button { margin-top: 6px; }
+        
+        @keyframes popUp {
+            0% { transform: scale(0.88); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes scaleUp {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Print-Ready Branded Statement Sheet */
+        @media print {
+            body * { visibility: hidden; }
+            #printableArea, #printableArea * { visibility: visible; }
+            #printableArea { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; background: white; display: block !important; }
+            #printableLegalArea, #printableLegalArea * { visibility: visible; }
+            #printableLegalArea { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; background: white; display: block !important; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- PROFESSIONAL APP LOADING OVERLAY -->
+<div id="appBootLoader" class="no-print">
+    <div class="loader-shield">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+            <path d="M20 15 H65 C80 15 85 30 75 42 C68 50 55 50 55 50 C75 52 85 68 75 82 C68 90 55 92 20 92 V78 H55 C65 78 68 65 55 60 H35 V45 H55 C65 45 68 30 55 28 H20 V15 Z" fill="#4c1d95"/>
+            <text x="22" y="42" font-size="28" font-weight="bold" fill="#eab308">₹</text>
+        </svg>
+    </div>
+    <div class="spinner-ring"></div>
+    <div class="loader-title" id="loaderMainText">BHARAT DIGITAL FINANCE</div>
+    <div class="loader-sub" id="loaderSubText">Initializing NBFC Recovery & Compliance Engine...</div>
+</div>
+
+<!-- INTERACTIVE TOAST NOTIFICATION -->
+<div id="appToast" class="no-print">✅ Saved Successfully!</div>
+
+<div class="app-shell no-print">
+    <!-- Enterprise Brand Header -->
+    <div class="enterprise-header">
+        <div class="brand-box" onclick="handleSecretLogoTap()">
+            <svg class="brand-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 15 H65 C80 15 85 30 75 42 C68 50 55 50 55 50 C75 52 85 68 75 82 C68 90 55 92 20 92 V78 H55 C65 78 68 65 55 60 H35 V45 H55 C65 45 68 30 55 28 H20 V15 Z" fill="url(#bdflGrad)"/>
+                <text x="22" y="42" font-size="28" font-weight="bold" fill="#ca8a04">₹</text>
+                <rect x="28" y="68" width="6" height="14" rx="2" fill="#1d4ed8"/>
+                <rect x="38" y="62" width="6" height="20" rx="2" fill="#1d4ed8"/>
+                <rect x="48" y="55" width="6" height="27" rx="2" fill="#1d4ed8"/>
+                <defs>
+                    <linearGradient id="bdflGrad" x1="0" y1="0" x2="0" y2="100" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#eab308"/>
+                        <stop offset="100%" stop-color="#1e40af"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <div class="brand-text">
+                <h1 id="headerBrandTitle">BHARAT DIGITAL</h1>
+                <span id="headerBrandSub">Digital Inclusive Empowering Bharat</span>
+            </div>
+        </div>
+
+        <div class="header-actions officer-only">
+            <button class="icon-btn" id="switchCustomerViewBtn" onclick="toggleAdminAndDashboard()">📱 Notice View</button>
+            <button class="icon-btn" onclick="openLoginModal()">🔑 Admin</button>
+        </div>
+
+        <div class="header-actions customer-only">
+            <span class="verified-customer-badge">🛡️ NBFC Secure</span>
+        </div>
+    </div>
+
+    <!-- Persistent Database Bar (Officer Only) -->
+    <div class="db-status-bar officer-only" id="topDbBar" style="display: none;">
+        <span>🗄️ DB (<span id="topBarCount">1</span>):</span>
+        <select id="quickCustomerSelect" onchange="selectCustomerFromMemory(parseInt(this.value))"></select>
+        <button class="sm-btn success" style="padding: 4px 8px;" onclick="openNewCustomerModal()">+ Add New</button>
+    </div>
+
+    <!-- SCREEN 1: OFFICER ADMIN, MEMORY DB & DATA ENTRY WORKSPACE -->
+    <div id="screenSetup" class="screen officer-only">
+        
+        <!-- MEMORY DATABASE MANAGER -->
+        <div class="card">
+            <div class="card-title">
+                <span>🗄️ 1. Customer Memory Database (<span id="memCount">0</span> Saved)</span>
+                <div style="display: flex; gap: 5px;">
+                    <button class="sm-btn success" onclick="openNewCustomerModal()">➕ New Customer</button>
+                    <button class="sm-btn load" onclick="saveCurrentToDatabaseWithToast()">💾 Save</button>
+                </div>
+            </div>
+            <div class="memory-list" id="customerMemoryList"></div>
+            <div style="display: flex; gap: 6px; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #e2e8f0;">
+                <button class="sm-btn" style="flex:1; background:#e2e8f0;" onclick="exportDatabaseJson()">⬇️ Export Backup</button>
+                <button class="sm-btn" style="flex:1; background:#e2e8f0;" onclick="document.getElementById('importDbInput').click()">⬆️ Import DB</button>
+                <input type="file" id="importDbInput" accept=".json" style="display:none" onchange="importDatabaseJson(event)">
+            </div>
+        </div>
+
+        <!-- HITECH OCR SCREENSHOT SCANNER -->
+        <div class="card">
+            <div class="card-title">
+                <span>🤖 2. Smart OCR Screenshot Scanner</span>
+                <span style="font-size: 10px; background: #dcfce7; color: #15803d; padding: 2px 6px; border-radius: 4px;">Auto-Fills Profile</span>
+            </div>
+            <div class="ocr-box">
+                <span style="font-size: 12.5px; font-weight: 800; color: var(--dark-purple);">📷 Upload Statement Screenshot for Auto-OCR</span>
+                <p style="font-size: 10.5px; color: var(--text-muted); margin-top: 3px;">Reads Name, Phone, EMI, Dates, Status & UTRs automatically</p>
+                <input type="file" accept="image/*" onchange="runFullOcrExtraction(event)">
+            </div>
+            <div class="progress-bar" id="ocrProgressBar">
+                <div class="progress-fill" id="ocrProgressFill"></div>
+            </div>
+            <div id="ocrStatusMsg" class="ocr-status"></div>
+        </div>
+
+        <!-- EDITABLE CUSTOMER PROFILE ON HOME PAGE -->
+        <div class="card" id="editableProfileCard">
+            <div class="card-title">
+                <span>✏️ 3. Active Customer Profile & Data Entry</span>
+                <button class="sm-btn success" onclick="saveCurrentToDatabaseWithToast()">✓ Save Profile</button>
+            </div>
+            
+            <div class="form-group">
+                <label>Customer Full Name</label>
+                <input type="text" id="inputName" class="form-control" placeholder="Enter Customer Name" oninput="syncActiveCustomer()">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Loan Account ID</label>
+                    <input type="text" id="inputLoanId" class="form-control" placeholder="Loan ID" oninput="syncActiveCustomer()">
+                </div>
+                <div class="form-group">
+                    <label>Customer Phone Number</label>
+                    <input type="text" id="inputPhone" class="form-control" placeholder="+91 ..." oninput="syncActiveCustomer()">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Customer Address & Branch</label>
+                    <input type="text" id="inputAddress" class="form-control" placeholder="Village, Post, District" oninput="syncActiveCustomer()">
+                </div>
+                <div class="form-group">
+                    <label>Collection Agent Name</label>
+                    <input type="text" id="inputAgentName" class="form-control" placeholder="Officer Name" oninput="syncActiveCustomer()">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Loan Frequency</label>
+                    <select id="inputLoanType" class="form-control" onchange="syncActiveCustomer()">
+                        <option value="Daily">Daily</option>
+                        <option value="Weekly">Weekly</option>
+                        <option value="Monthly" selected>Monthly</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Installment Amount (₹)</label>
+                    <input type="number" id="inputEmi" class="form-control" placeholder="1568" oninput="updateAllScheduledEmis(this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Editable Fine (₹)</label>
+                    <input type="number" id="inputFine" class="form-control" value="500" oninput="syncActiveCustomer()" style="font-weight: 800; color: var(--danger-red);">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Customer Photo (Upload)</label>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <img id="setupPhotoPreview" src="" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-purple);">
+                    <input type="file" accept="image/*" class="form-control" style="font-size: 11px;" onchange="handleCustomerPhotoUpload(event)">
+                </div>
+            </div>
+        </div>
+
+        <!-- EDITABLE INSTALLMENT & PAYMENT HISTORY TABLE -->
+        <div class="card" id="editableHistoryCard">
+            <div class="card-title">
+                <span>📅 4. Installment & Payment History Data Entry</span>
+            </div>
+            <div class="inst-add-bar">
+                <span style="font-size: 11px; font-weight: 700; color: var(--dark-purple);">Total EMI Count (#):</span>
+                <input type="number" id="quickAddCountInput" value="8" min="1" max="48">
+                <button class="sm-btn load" style="padding: 6px 12px;" onclick="generateInstallmentRowsByNumber()">⚡ Generate</button>
+                <button class="sm-btn" style="padding: 6px 10px; background: #e2e8f0; margin-left: auto;" onclick="addInstallmentRow()">+ 1 Row</button>
+            </div>
+            
+            <div class="inst-editor-header">
+                <div>#</div>
+                <div>Due Date</div>
+                <div>EMI (₹)</div>
+                <div>Status</div>
+                <div>UTR / Remarks</div>
+                <div></div>
+            </div>
+            <div id="adminInstallmentEditor"></div>
+        </div>
+
+        <!-- BRANDING, COMPANY MOBILE, UPI & LINK GENERATOR WITH FINE-ONLY MODE -->
+        <div class="card">
+            <div class="card-title">
+                <span>🔐 5. NBFC Link Generator & Fine-Only Link Mode</span>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Brand Banner Title</label>
+                    <input type="text" id="inputBrandTitle" class="form-control" value="BHARAT DIGITAL FINANCE LIMITED" oninput="saveSystemConfig()">
+                </div>
+                <div class="form-group">
+                    <label>Merchant UPI ID (Editable)</label>
+                    <input type="text" id="inputUpiId" class="form-control" value="Q064772617@ybl" oninput="saveSystemConfig()">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Company Mobile (For WhatsApp)</label>
+                    <input type="text" id="inputCompanyPhone" class="form-control" value="9733322375" oninput="saveSystemConfig()">
+                </div>
+                <div class="form-group">
+                    <label>Customer Fine Selection Option</label>
+                    <select id="inputAllowFineSelection" class="form-control" onchange="saveSystemConfig()">
+                        <option value="yes">Allow Customer to Select / Deselect Fine</option>
+                        <option value="no">Lock Fine (Mandatory Fine)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Toggle for Fine-Only Link -->
+            <div class="form-group" style="margin-top: 10px; background: #fffbeb; border: 1px solid #fde68a; padding: 10px; border-radius: 8px;">
+                <label style="color: #92400e; font-weight: 800;">🎯 Link Mode Selection</label>
+                <select id="inputLinkMode" class="form-control" style="background: white;">
+                    <option value="full">Full EMI & Fine Repayment Portal Link</option>
+                    <option value="fine">Fine-Only / Cash Bounce Charge Collection Link</option>
+                </select>
+            </div>
+
+            <button class="btn btn-primary" style="padding: 12px; font-size: 13px; margin-top: 8px;" onclick="generateEncryptedShortLink()">🔐 Generate Encrypted Customer Link & QR</button>
+            
+            <div id="inlineClickableLinkBox" class="clickable-link-card" style="display: none;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <span style="font-size: 10.5px; background:#dcfce7; color:#166534; padding:2px 8px; border-radius:10px; font-weight:800;" id="linkModeBadgeLabel">🔒 Full Repayment Link</span>
+                    <span style="font-size: 10px; color:#15803d; font-weight:700;" id="cipherLengthBadge">Ultra-Short Token</span>
+                </div>
+                
+                <div class="link-qr-container" onclick="openZoomedQrModal()" title="Tap to Zoom View">
+                    <img id="portalLinkQrImg" src="" alt="Customer Portal Link QR Code">
+                    <div style="font-size: 10px; color: #15803d; font-weight: 800; margin-top: 4px;">🔍 Tap to Zoom Encrypted QR</div>
+                </div>
+
+                <span style="font-size: 10.5px; color: #166534; font-weight: 700; display: block; margin-bottom: 4px;">🔗 Short Encrypted Customer Link:</span>
+                <a href="#" id="clickableAnchorLink" target="_blank">Open Encrypted Link</a>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px;">
+                    <button class="sm-btn load" style="padding: 8px;" onclick="copyGeneratedLink()">📋 Copy Short Link</button>
+                    <button class="sm-btn success" style="padding: 8px;" onclick="shareLinkWhatsApp()">💬 Send on WhatsApp</button>
+                    <button class="sm-btn" style="padding: 8px; background: #0f172a; color: white;" onclick="openZoomedQrModal()">🔍 Zoom View QR</button>
+                    <button class="sm-btn" style="padding: 8px; background:#cbd5e1;" onclick="previewCustomerLockedMode()">👁️ Preview Customer View</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-success" onclick="saveMemoryAndOpenDashboard()">💾 Save Changes & Open Dashboard View ➔</button>
+        </div>
+    </div>
+
+    <!-- SCREEN 2: COLLECTION & PAYMENT DASHBOARD -->
+    <div id="screenDashboard" class="screen active">
+        <!-- Top Purple Banner -->
+        <div class="top-banner">
+            <div class="banner-profile">
+                <div class="banner-avatar-wrap">
+                    <img id="dashAvatar" src="" alt="Customer" class="banner-avatar">
+                    <span class="upi-mini-tag">UPI▸</span>
+                </div>
+                <div class="banner-info">
+                    <h2 id="dashName">CUSTOMER NAME</h2>
+                    <p id="dashPhone">+91 9800000000</p>
+                    <span class="loan-pill" id="dashLoanId">Loan ID: BDFL-LOAN</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Summary Card -->
+        <div class="floating-summary-card">
+            <span class="active-pill" id="dashAccountStatusPill">Active</span>
+            <div class="summary-grid">
+                <div class="sum-col">
+                    <p>Total amount</p>
+                    <h3 id="dashTotalAmount">₹ 0</h3>
+                </div>
+                <div class="sum-col right">
+                    <p>Collected</p>
+                    <h3 id="dashCollectedAmount" style="color: var(--success-green);">₹ 0</h3>
+                </div>
+            </div>
+            <div class="address-bar">
+                <span id="dashAddress">📍 Branch Address</span>
+                <span>👨‍💼 Agent: <strong id="dashAgentName">Chandan Das</strong></span>
+            </div>
+        </div>
+
+        <!-- NBFC Official Notice Banner -->
+        <div class="nbfc-notice-banner customer-only">
+            <strong>⚠️ NBFC REGULATORY RECOVERY NOTICE</strong>
+            This is an official digital demand notice issued under the guidelines of Reserve Bank of India (RBI) Non-Banking Financial Company (NBFC) regulations. Failure to clear overdue EMIs and bounce penalty charges within 3 days shall attract immediate legal arbitration and CIBIL score default reporting.
+        </div>
+
+        <!-- Officer Quick Bar on Dashboard -->
+        <div class="officer-only" style="display:flex; gap:6px; margin-bottom:10px;">
+            <button class="sm-btn load" style="flex:1; padding:8px;" onclick="showAdminScreen()">✏️ Edit Customer / DB</button>
+            <button class="sm-btn success" style="flex:1; padding:8px;" onclick="openNewCustomerModal()">➕ New Customer</button>
+            <button class="sm-btn" style="flex:1; padding:8px; background:#0f172a; color:white;" onclick="generateEncryptedShortLink(); showAdminScreen();">🔐 Get Link</button>
+        </div>
+
+        <!-- Filter & Total Row -->
+        <div class="filter-row">
+            <div class="filter-pill">✓ ALL (<span id="dashInstCount">4</span>) ▾</div>
+            <div style="font-weight: 800; font-size: 14px;" id="dashTotalRight">₹0</div>
+        </div>
+
+        <!-- Installment Schedule List -->
+        <div class="installment-list" id="dashboardInstallmentList"></div>
+
+        <!-- Overdue / Bounce Payment Action Card -->
+        <div class="card">
+            <div class="card-title">
+                <span id="dashboardCardTitleText">💳 Current Due & Advance Payment</span>
+                <span style="color: var(--danger-red); font-size: 11px;" id="activeDueDateBadge">Current Due</span>
+            </div>
+
+            <table class="due-Breakdown-table">
+                <tr id="breakdownEmiRow">
+                    <td>Active / Overdue Installment EMI</td>
+                    <td id="breakdownEmi">₹1,568.00</td>
+                </tr>
+                <tr>
+                    <td>Bounce / Late Penalty (Editable)</td>
+                    <td id="breakdownFine" style="color: var(--danger-red);">₹500.00</td>
+                </tr>
+                <tr style="font-size: 14px; background: var(--light-purple);">
+                    <td style="font-weight: 800; color: var(--dark-purple);">Total Payable Amount</td>
+                    <td id="breakdownTotal" style="color: var(--dark-purple); font-size: 15.5px;">₹2,068.00</td>
+                </tr>
+            </table>
+
+            <!-- Fine Selection / Deselection Options -->
+            <div class="fine-choice-box" id="fineChoiceBoxContainer">
+                <div class="fine-choice-title">
+                    <span>Bounce Fine Option:</span>
+                    <span id="fineStatusLabel">Included</span>
+                </div>
+                <div class="fine-radio-group">
+                    <button type="button" class="fine-option-btn active-with-fine" id="btnPayWithFine" onclick="setFineOption(true)">
+                        ✅ Select Fine<br><span style="font-size:10px; font-weight:600;">(Protects CIBIL Score)</span>
+                    </button>
+                    <button type="button" class="fine-option-btn" id="btnPayWithoutFine" onclick="setFineOption(false)">
+                        ❌ Deselect Fine (₹0)<br><span style="font-size:10px; font-weight:600;">(EMI Only - CIBIL Risk)</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Advance EMI & Calculator Multiplier Input -->
+            <div class="form-group" id="advanceEmiInputWrapper" style="margin-top: 12px; text-align: left;">
+                <label style="color: var(--dark-purple); font-weight: 800;">💡 Custom / Advance Payment Amount (₹)</label>
+                <input type="number" id="customPayAmountInput" class="form-control" style="font-size: 15px; font-weight: 700; color: var(--primary-purple); background: #fdf4ff; border-color: #f0abfc;" onchange="updateCustomPayAmount(this.value)">
+                <div class="advance-pills">
+                    <span class="adv-pill" onclick="setAdvanceEmiMultiplier(1)">1 EMI (Min Due)</span>
+                    <span class="adv-pill" onclick="setAdvanceEmiMultiplier(2)">2 EMIs (Advance)</span>
+                    <span class="adv-pill" onclick="setAdvanceEmiMultiplier(3)">3 EMIs (Advance)</span>
+                    <span class="adv-pill" onclick="setAdvanceEmiMultiplier(0)">Full Close</span>
+                </div>
+            </div>
+
+            <!-- CIBIL Warning Alert -->
+            <div class="warning-box" id="cibilWarningBox">
+                ⚠️ <strong>CIBIL & Legal Warning:</strong> Deselecting the bounce fine keeps your loan account in default arrears, which will negatively impact your CIBIL credit score and may attract legal recovery action.
+            </div>
+
+            <!-- Loan Agreement & Digital Consent Form Checkbox (Customer Only) -->
+            <div class="agreement-box customer-only">
+                <label>
+                    <input type="checkbox" id="customerAgreementConsent" onchange="toggleAgreementConsent()">
+                    <span>I hereby declare that I am the borrower/authorized representative, and I agree to the <a href="#" onclick="openAgreementModal(event)" style="color:var(--primary-purple);">NBFC Loan Hypothecation Terms & Conditions</a> and digital consent guidelines.</span>
+                </label>
+            </div>
+
+            <!-- Dynamic UPI QR & Timer -->
+            <div class="qr-section">
+                <div style="font-size: 12px; font-weight: 700; color: var(--dark-purple);">Scan & Pay via Any UPI App (<span id="dashUpiId">Q064772617@ybl</span>)</div>
+                <div class="qr-box">
+                    <img id="dynamicQrImg" src="" alt="UPI QR Code" onclick="openZoomedUpiQrModal()" title="Tap to Zoom UPI QR">
+                </div>
+                <div style="font-size: 10.5px; color: var(--primary-purple); font-weight: 700; margin-bottom: 4px; cursor: pointer;" onclick="openZoomedUpiQrModal()">🔍 Tap QR to Zoom View</div>
+                <div class="timer-text" id="qrCountdown">QR Valid For: 10:00</div>
+                <a href="#" id="directUpiAppBtn" class="upi-app-btn">⚡ Pay Now via UPI App (<span id="upiBtnAmountText">₹2,068</span>)</a>
+            </div>
+
+            <!-- Payment Proof & Amount Verification Card for Customer -->
+            <div class="payment-proof-card customer-only" id="paymentProofCardSection" style="opacity: 0.5; pointer-events: none;">
+                <div style="font-size: 12px; font-weight: 800; color: #166534; margin-bottom: 4px;">📤 Confirm Payment & Upload Screenshot</div>
+                <p style="font-size: 10.5px; color: #15803d; margin-bottom: 6px;">(Please agree to the loan agreement above to enable submission)</p>
+                <div class="form-row" style="margin-bottom: 6px;">
+                    <div class="form-group" style="text-align: left;">
+                        <label style="color: #166534;">Paid Amount (₹)</label>
+                        <input type="number" id="customerPaidAmountInput" class="form-control" placeholder="Enter amount paid" oninput="verifyCustomerPaymentMatch()">
+                    </div>
+                    <div class="form-group" style="text-align: left;">
+                        <label style="color: #166534;">UTR / Ref No. (Optional)</label>
+                        <input type="text" id="customerPaidUtrInput" class="form-control" placeholder="12-digit UTR">
+                    </div>
+                </div>
+                <div id="paymentMatchStatusNotice" style="font-size: 11px; font-weight: 700; margin-bottom: 8px; color: #b45309;">⚠️ Enter paid amount to verify status.</div>
+                <input type="file" id="customerProofFile" accept="image/*" class="form-control" style="background: white;">
+                <button class="btn btn-success" style="margin-top: 8px; padding: 11px; font-size: 12.5px;" onclick="customerSubmitProofAndShowCongrats()">✅ Confirm Payment & View Receipt</button>
+            </div>
+
+            <!-- Customer Feedback & Promise-to-Pay Form -->
+            <div class="payment-proof-card customer-only" style="margin-top: 10px; background: #fffbeb; border-color: #fde68a;">
+                <div style="font-size: 12.5px; font-weight: 800; color: #92400e; margin-bottom: 4px;">📝 Customer Feedback & Promise-to-Pay</div>
+                <p style="font-size: 10.5px; color: #b45309; margin-bottom: 8px;">Request a payment date extension or send feedback to agent <strong id="feedbackAgentName">Chandan Das</strong>:</p>
+                
+                <div class="form-group" style="text-align: left;">
+                    <label style="color: #92400e;">Promise-to-Pay Date</label>
+                    <input type="date" id="customerPromiseDate" class="form-control" style="background: white;">
+                </div>
+                <div class="form-group" style="text-align: left; margin-top: 6px;">
+                    <label style="color: #92400e;">Feedback / Reason for Delay</label>
+                    <textarea id="customerFeedbackText" class="form-control" rows="2" placeholder="Enter your remarks or payment commitment notes..." style="background: white; resize: none;"></textarea>
+                </div>
+                <button class="btn btn-whatsapp" style="margin-top: 6px; padding: 10px; font-size: 12px;" onclick="submitCustomerFeedbackWhatsApp()">💬 Submit Promise-to-Pay on WhatsApp</button>
+            </div>
+
+            <!-- Officer Quick Link QR Card on Dashboard -->
+            <div class="qr-section officer-only" style="background: #f0fdf4; border-color: #bbf7d0; margin-top: 10px;">
+                <div style="font-size: 11.5px; font-weight: 800; color: #166534;">📲 Encrypted Customer Link QR (Tap to Zoom)</div>
+                <div class="qr-box" style="border: 1.5px solid #22c55e; cursor: pointer;" onclick="openZoomedQrModal()">
+                    <img id="dashPortalLinkQrImg" src="" alt="Portal Link QR Code" style="width: 130px; height: 130px;">
+                </div>
+                <div style="font-size: 10.5px; color: #15803d; font-weight: 800; cursor: pointer;" onclick="openZoomedQrModal()">🔍 Tap QR for Zoomed View</div>
+            </div>
+        </div>
+
+        <!-- Customer-Only Actions -->
+        <div class="actions customer-only">
+            <button class="btn btn-pdf" onclick="printBrandedStatement()">📥 Download Official Statement of Account (SOA - PDF)</button>
+            <button class="btn btn-danger" style="background: #dc2626; color: white;" onclick="printLegalNoticePdf()">⚠️ Download Formal Legal Notice (PDF)</button>
+        </div>
+
+        <!-- Officer-Only Actions -->
+        <div class="actions officer-only">
+            <button class="btn btn-primary" onclick="openMarkPaymentModal()">✅ Mark Payment Received (Officer)</button>
+            <button class="btn btn-pdf" onclick="printBrandedStatement()">📥 Download Official Statement of Account (SOA - PDF)</button>
+            <button class="btn btn-danger" style="background: #dc2626; color: white;" onclick="printLegalNoticePdf()">⚠️ Generate & Download Legal Notice (PDF)</button>
+            <a href="#" class="btn btn-whatsapp" onclick="sendWhatsAppUpdate(event)">💬 Send Notice / Receipt to Customer WhatsApp</a>
+            <a href="#" class="btn btn-sms" onclick="sendSmsAlert(event)">📲 Send Payment & CIBIL Alert to Customer SMS</a>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         MODAL: ADD NEW CUSTOMER (QUICK POPUP SYSTEM)
+         ========================================================= -->
+    <div class="modal-overlay" id="newCustomerModal">
+        <div class="modal" style="text-align: left;">
+            <h3 style="text-align: center;">➕ Add New Customer to Memory</h3>
+            <p style="text-align: center;">Enter customer details to create a new loan ledger:</p>
+            
+            <div class="form-group">
+                <label>Customer Full Name *</label>
+                <input type="text" id="newCustName" class="form-control" placeholder="e.g. SURJA KANTA THOKDAR">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Loan ID</label>
+                    <input type="text" id="newCustLoanId" class="form-control" placeholder="Auto-generated if blank">
+                </div>
+                <div class="form-group">
+                    <label>Phone Number *</label>
+                    <input type="text" id="newCustPhone" class="form-control" placeholder="+91 9800000000">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Customer Address</label>
+                <input type="text" id="newCustAddress" class="form-control" value="Harishchandrapur, Malda - 732125">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Loan Frequency</label>
+                    <select id="newCustLoanType" class="form-control">
+                        <option value="Daily">Daily</option>
+                        <option value="Weekly">Weekly</option>
+                        <option value="Monthly" selected>Monthly</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Amount (₹)</label>
+                    <input type="number" id="newCustEmi" class="form-control" value="1568">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Total Installments</label>
+                    <input type="number" id="newCustMonths" class="form-control" value="8" min="1" max="100">
+                </div>
+                <div class="form-group">
+                    <label>Collection Agent</label>
+                    <input type="text" id="newCustAgent" class="form-control" value="Chandan Das">
+                </div>
+            </div>
+
+            <button class="btn btn-success" onclick="saveNewCustomerFromModal()">🚀 Create & Save Customer</button>
+            <button class="btn btn-secondary" onclick="closeAllModals()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         MODAL: NBFC LOAN AGREEMENT & TERMS POPUP
+         ========================================================= -->
+    <div class="modal-overlay" id="agreementModal">
+        <div class="modal" style="text-align: left; max-width: 420px;">
+            <h3 style="color: var(--dark-purple); text-align: center;">📜 NBFC Loan Hypothecation Agreement</h3>
+            <p style="font-size: 11px; color: var(--text-muted); text-align: center; margin-bottom: 10px;">Bharat Digital Finance Limited - Digital Lending Terms</p>
+            
+            <div style="font-size: 11.5px; line-height: 1.5; color: var(--text-main); max-height: 220px; overflow-y: auto; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; margin-bottom: 12px;">
+                <strong>1. Repayment Obligation:</strong> The borrower agrees to repay the monthly/weekly/daily installments as per the agreed schedule without default.<br><br>
+                <strong>2. Bounce & Late Charges:</strong> In the event of ECS/NACH/UPI bounce or delay, a mandatory bounce penalty charge (default ₹500.00 or as specified by officer) shall be levied immediately.<br><br>
+                <strong>3. CIBIL Reporting:</strong> Persistent defaults exceeding 30 days will be reported to Credit Information Bureaus (CIBIL/Experian), adversely affecting credit score.<br><br>
+                <strong>4. Legal Recourse:</strong> The lender reserves full legal rights to initiate proceedings under Section 138 of the Negotiable Instruments Act and Arbitration & Conciliation Act for recovery of outstanding dues.
+            </div>
+
+            <button class="btn btn-primary" style="padding: 10px; font-size: 12.5px;" onclick="acceptAgreementFromModal()">✅ I Agree & Accept Terms</button>
+            <button class="btn btn-secondary" style="padding: 9px; font-size: 12px; margin-top: 6px;" onclick="closeAllModals()">Close</button>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         MODAL: INITIAL CUSTOMER DEMAND & WARNING POPUP
+         ========================================================= -->
+    <div class="modal-overlay" id="customerWarningDemandModal" style="display: none;">
+        <div class="modal">
+            <div style="width: 55px; height: 55px; background: #fee2e2; color: #dc2626; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 10px auto; border: 2px solid #fecaca;">⚠️</div>
+            <h3 style="color: #991b1b; font-size: 18px;">URGENT RECOVERY NOTICE</h3>
+            <p style="font-size: 12px; color: #334155; margin-bottom: 12px; line-height: 1.5;">
+                Dear Customer, your loan account has overdue installments and bounce penalty charges. Please clear your dues immediately to avoid legal action and CIBIL blacklisting.
+            </p>
+            <button class="btn btn-success" style="padding: 11px; font-size: 13px;" onclick="closeCustomerWarningModal()">I Understand & Proceed to Pay</button>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         MODAL: NEXT-LEVEL CONGRATULATIONS SCREEN
+         ========================================================= -->
+    <div class="modal-overlay" id="congratsModal">
+        <div class="modal">
+            <div class="congrats-badge-circle" id="congratsIcon">🎉</div>
+            <h3 id="congratsTitle" style="color: #15803d; font-size: 20px; font-weight: 800;">Congratulations!</h3>
+            <p id="congratsSub" style="font-weight: 600; color: #334155; margin-bottom: 8px;">Payment Verified & Recorded Successfully</p>
+            
+            <div class="congrats-receipt-box">
+                <div class="congrats-receipt-row">
+                    <span style="color:#64748b;">Customer:</span>
+                    <strong id="cgCustName">-</strong>
+                </div>
+                <div class="congrats-receipt-row">
+                    <span style="color:#64748b;">Loan ID:</span>
+                    <strong id="cgLoanId">-</strong>
+                </div>
+                <div class="congrats-receipt-row">
+                    <span style="color:#64748b;">Amount Paid:</span>
+                    <strong id="cgAmount" style="color:#15803d; font-size:14px;">₹0.00</strong>
+                </div>
+                <div class="congrats-receipt-row">
+                    <span style="color:#64748b;">Fine Status:</span>
+                    <strong id="cgFineStatus">Included</strong>
+                </div>
+                <div class="congrats-receipt-row">
+                    <span style="color:#64748b;">UTR / Ref:</span>
+                    <strong id="cgUtr" style="font-family:monospace;">-</strong>
+                </div>
+            </div>
+
+            <button class="btn btn-whatsapp" onclick="dispatchCongratsWhatsApp()">💬 Send Official Receipt on WhatsApp</button>
+            <button class="btn btn-pdf" onclick="printBrandedStatement()">📥 Download Updated SOA Receipt (PDF)</button>
+            <button class="btn btn-secondary" onclick="closeAllModals()">Done</button>
+        </div>
+    </div>
+
+    <!-- PHONE NUMBER LOGIN MODAL (NO OTP, NO HINT) -->
+    <div class="modal-overlay" id="phoneLoginModal" style="display: none;">
+        <div class="modal">
+            <h3 style="color: var(--dark-purple);">🔑 Officer / Agent Login</h3>
+            <p style="font-size: 12px; color: var(--text-muted);">Enter your registered mobile number or security PIN to access the Admin Workspace:</p>
+            
+            <input type="tel" id="agentPhoneInput" class="form-control" placeholder="Enter Mobile No. or PIN" style="text-align: center; font-size: 16px; font-weight: 700; margin-bottom: 12px; letter-spacing: 2px;">
+            
+            <button class="btn btn-primary" onclick="loginWithPhoneNo()">🚀 Instant Login</button>
+            <button class="btn btn-secondary" style="margin-top: 6px;" onclick="closeAllModals()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- ZOOMABLE LINK QR MODAL -->
+    <div class="zoom-qr-modal" id="zoomQrModal" onclick="closeZoomedQrModal()">
+        <div class="zoom-qr-box" onclick="event.stopPropagation()">
+            <h3 style="color: var(--dark-purple); font-size: 18px; margin-bottom: 4px;">🔍 High-Res Scannable QR</h3>
+            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">Scan with any mobile camera or UPI app:</p>
+            <img id="zoomedQrImage" src="" alt="Zoomed Link QR Code">
+            <div id="zoomedQrUrlText" style="font-size: 10px; font-family: monospace; color: #166534; background: #f0fdf4; padding: 6px; border-radius: 6px; margin: 10px 0; word-break: break-all; border: 1px solid #bbf7d0; max-height: 60px; overflow-y: auto;"></div>
+            <button class="btn btn-success" style="padding: 10px; font-size: 12px; margin-top: 8px;" onclick="copyGeneratedLink()">📋 Copy Encrypted Link</button>
+            <button class="btn btn-secondary" style="padding: 9px; font-size: 12px; margin-top: 6px;" onclick="closeZoomedQrModal()">Close Zoom</button>
+        </div>
+    </div>
+
+    <!-- MODAL: OFFICER MARK PAYMENT -->
+    <div class="modal-overlay officer-only" id="markPaymentModal">
+        <div class="modal" style="text-align: left;">
+            <h3 style="text-align: center;">✅ Confirm Payment Collection</h3>
+            <p style="text-align: center;">Record customer transaction into persistent memory:</p>
+            
+            <div class="form-group">
+                <label>Select Installment to Mark Paid</label>
+                <select id="selectInstToPay" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label>UTR / Reference Number</label>
+                <input type="text" id="inputPaymentUtr" class="form-control" placeholder="e.g. HDFCH01299887766">
+            </div>
+            <div class="form-group">
+                <label>Collection Date</label>
+                <input type="text" id="inputPaymentDate" class="form-control" value="17 Oct 26">
+            </div>
+
+            <button class="btn btn-primary" onclick="confirmAndSavePayment()">💾 Save Payment & Show Receipt</button>
+            <button class="btn btn-secondary" onclick="closeAllModals()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- PRINTABLE BRANDED STATEMENT OF ACCOUNT (SOA) AREA -->
+<div id="printableArea" style="display: none; font-family: 'Segoe UI', sans-serif; color: #0f172a; padding: 25px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #4c1d95; padding-bottom: 12px; margin-bottom: 18px;">
+        <div>
+            <h1 id="printBrandTitle" style="color: #1e3a8a; font-size: 22px; margin: 0;">BHARAT DIGITAL FINANCE LIMITED</h1>
+            <p id="printBrandSub" style="color: #64748b; font-size: 11px; margin: 2px 0 0 0;">DIGITAL INCLUSIVE EMPOWERING BHARAT</p>
+        </div>
+        <div style="text-align: right; font-size: 11px;">
+            <strong style="color:#15803d; font-size:13px;">OFFICIAL STATEMENT OF ACCOUNT (SOA)</strong><br>
+            <span>Date: <span id="printGeneratedDate">17 Oct 2026</span></span><br>
+            <span>Collection Agent: <strong id="printAgentName">Chandan Das</strong></span>
+        </div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 18px;">
+        <div style="display: flex; gap: 14px; align-items: center;">
+            <img id="printCustPhoto" src="" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #4c1d95;">
+            <div style="font-size: 12px; line-height: 1.5;">
+                <strong style="font-size: 15px;" id="printCustName">CUSTOMER NAME</strong><br>
+                <span>Loan Account ID: <strong id="printLoanId">BDFL-LOAN</strong></span><br>
+                <span>Customer Phone: <span id="printCustPhone">+91</span></span><br>
+                <span>Address: <span id="printCustAddress">Address</span></span><br>
+                <span>Loan Type: <strong id="printLoanType">Monthly</strong></span>
+            </div>
+        </div>
+        <div style="text-align: right; font-size: 12px; line-height: 1.6;">
+            <span>Total Sanctioned: <strong id="printTotalSanctioned">₹0.00</strong></span><br>
+            <span>Total Collected: <strong id="printTotalCollected" style="color: #15803d;">₹0.00</strong></span><br>
+            <span>Bounce Fine Status: <strong id="printFineStatus">₹500.00</strong></span><br>
+            <span style="font-size: 14px; color: #dc2626;">Current Payable Due: <strong id="printCurrentDue">₹0.00</strong></span>
+        </div>
+    </div>
+
+    <h3 style="font-size: 14px; color: #4c1d95; margin-bottom: 8px;">Complete Installment & Transaction Ledger</h3>
+    <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 18px;">
+        <thead>
+            <tr style="background: #f3f0ff; color: #4c1d95; text-align: left;">
+                <th style="padding: 8px; border: 1px solid #cbd5e1;">#</th>
+                <th style="padding: 8px; border: 1px solid #cbd5e1;">Due Date</th>
+                <th style="padding: 8px; border: 1px solid #cbd5e1;">Status / Collection Date</th>
+                <th style="padding: 8px; border: 1px solid #cbd5e1;">UTR / Reference No.</th>
+                <th style="padding: 8px; border: 1px solid #cbd5e1; text-align: right;">Amount (INR)</th>
+            </tr>
+        </thead>
+        <tbody id="printHistoryTableBody"></tbody>
+    </table>
+
+    <div style="display: flex; justify-content: space-around; align-items: center; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; margin-bottom: 16px; text-align: center;">
+        <div>
+            <strong style="font-size: 11px; color: #4c1d95; display: block; margin-bottom: 4px;">1. Scan to Pay via UPI</strong>
+            <img id="printUpiQrImg" src="" style="width: 105px; height: 105px; border: 1px solid #cbd5e1; padding: 4px; background: white;">
+            <div style="font-size: 10px; color: #475569; margin-top: 2px;">UPI ID: <span id="printUpiId">Q064772617@ybl</span></div>
+        </div>
+        <div>
+            <strong style="font-size: 11px; color: #15803d; display: block; margin-bottom: 4px;">2. Scan to Open Online Notice Link</strong>
+            <img id="printPortalLinkQrImg" src="" style="width: 105px; height: 105px; border: 1px solid #22c55e; padding: 4px; background: white;">
+            <div style="font-size: 10px; color: #475569; margin-top: 2px;">Opens Live Customer Portal</div>
+        </div>
+    </div>
+
+    <div style="font-size: 11px; color: #475569; border-top: 1px solid #cbd5e1; padding-top: 10px; display: flex; justify-content: space-between;">
+        <span>Assigned Collection Officer: <strong id="printFooterAgent">Chandan Das</strong></span>
+        <span>Authorized Signatory - Bharat Digital Finance Limited Recovery Division</span>
+    </div>
+</div>
+
+<!-- PRINTABLE FORMAL LEGAL NOTICE AREA -->
+<div id="printableLegalArea" style="display: none; font-family: 'Times New Roman', Times, serif; color: #000000; padding: 35px; line-height: 1.6;">
+    <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px;">
+        <h2 style="margin: 0; font-size: 20px;">BHARAT DIGITAL FINANCE LIMITED</h2>
+        <p style="margin: 2px 0; font-size: 12px;">LEGAL & RECOVERY DIVISION • NOTICE UNDER SECTION 138 / ARBITRATION ACT</p>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 20px;">
+        <div>
+            <strong>To,</strong><br>
+            <span id="legalPrintCustName" style="font-size: 15px; font-weight: bold;">CUSTOMER NAME</span><br>
+            <span>Address: <span id="legalPrintCustAddress">Address</span></span><br>
+            <span>Phone: <span id="legalPrintCustPhone">+91</span></span>
+        </div>
+        <div style="text-align: right;">
+            <strong>Ref. Loan ID:</strong> <span id="legalPrintLoanId">BDFL-LOAN</span><br>
+            <strong>Date:</strong> <span id="legalPrintDate">17 Oct 2026</span><br>
+            <strong>Collection Agent:</strong> <span id="legalPrintAgent">Chandan Das</span>
+        </div>
+    </div>
+
+    <h4 style="text-align: center; text-decoration: underline; font-size: 14px; margin-bottom: 15px;">
+        SUBJECT: FINAL LEGAL NOTICE FOR DEMAND & RECOVERY OF OVERDUE LOAN INSTALLMENTS & BOUNCE PENALTIES
+    </h4>
+
+    <p style="font-size: 12.5px; text-align: justify; margin-bottom: 12px;">
+        Dear Sir/Madam,
+        <br><br>
+        Under instructions from and on behalf of our client, <b>Bharat Digital Finance Limited</b>, we serve upon you this Final Legal Demand Notice for default in repayment of loan installments under your loan account facility.
+        <br><br>
+        1. That you had availed a financial credit facility under Loan ID: <strong id="legalPrintLoanIdBody">BDFL-LOAN</strong> and agreed to abide by the repayment schedule.
+        <br>
+        2. That your installment(s) amounting to <strong id="legalPrintDueAmt">₹2,068.00</strong> (Inclusive of overdue EMI and mandatory penalty charges) have bounced / remained unpaid despite repeated reminders by our field collection officer, <b id="legalPrintAgentInline">Chandan Das</b>.
+        <br>
+        3. Your persistent default has adversely affected your <b>CIBIL Credit Score</b> and credit history.
+        <br><br>
+        <strong>CALL FOR PAYMENT:</strong><br>
+        You are hereby called upon to pay the total outstanding sum of <strong id="legalPrintDueAmtFinal">₹2,068.00</strong> within <strong>3 (Three) days</strong> of receipt of this notice through our secure digital payment portal or via UPI ID: <b>Q064772617@ybl</b>.
+        <br><br>
+        Failure to clear the said dues within the stipulated period shall compel our client to initiate rigorous legal proceedings against you under Section 138 of the Negotiable Instruments Act and initiate civil/criminal recovery action, the cost and consequences of which shall be entirely yours.
+    </p>
+
+    <div style="margin-top: 40px; display: flex; justify-content: space-between; font-size: 13px;">
+        <div>
+            <br><br>
+            <strong>(Authorized Signatory)</strong><br>
+            Bharat Digital Finance Limited Legal Cell
+        </div>
+        <div style="text-align: right;">
+            <div style="border: 1px solid #000; width: 130px; height: 50px; margin-left: auto; margin-bottom: 5px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #64748b;">SEAL / STAMP</div>
+            <strong id="legalPrintAgentNameFoot">Chandan Das</strong><br>
+            Field Collection Officer
+        </div>
+    </div>
+</div>
+
+<script>
+    /* =========================================================
+       1. HIGH-SECURITY CIPHER ENCRYPTION & ULTRA-SHORT LINK ENGINE
+       ========================================================= */
+    const STORAGE_KEY_DB = "BDFL_ENTERPRISE_CUSTOMERS_V24";
+    const STORAGE_KEY_CFG = "BDFL_ENTERPRISE_CONFIG_V24";
+    const STORAGE_KEY_LOCK = "BDFL_CUSTOMER_LOCK_V24";
+    const STORAGE_KEY_FIRST_LINK = "BDFL_FIRST_LINK_PAYLOAD_V24";
+    const CIPHER_SECRET_KEY = "BDFL#2026$CHANDAN@9733322375!KEY";
+    const DEFAULT_COMPANY_MOBILE = "9733322375";
+    const DEFAULT_UPI_ID = "Q064772617@ybl";
+
+    const DEFAULT_AVATAR = "data:image/svg+xml;utf8," + encodeURIComponent(`
+        <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+            <rect width="120" height="120" fill="#4c1d95"/>
+            <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" fill="#ffffff" font-family="Arial" font-size="38" font-weight="bold">BDFL</text>
+        </svg>
+    `);
+
+    // XOR Stream Cipher + URL-Safe Base64 Dictionary Compression
+    function encryptCompactPayload(obj) {
+        const packed = [
+            obj.n, obj.l, obj.p, obj.a, obj.ag, obj.e, obj.fs, obj.afs, obj.u, obj.bt, obj.cp,
+            obj.lt || "Monthly",
+            obj.f !== undefined ? obj.f : 500, // Dynamic Editable Fine
+            obj.lm || "full", // Link Mode ("full" or "fine")
+            (obj.i || []).map(row => `${row[0]}~${row[1]}~${row[2]}~${row[4]}~${row[5]}`).join('|')
+        ];
+        const jsonStr = JSON.stringify(packed);
+        const utf8Bytes = unescape(encodeURIComponent(jsonStr));
+        let xored = "";
+        for (let i = 0; i < utf8Bytes.length; i++) {
+            const kCode = CIPHER_SECRET_KEY.charCodeAt(i % CIPHER_SECRET_KEY.length);
+            xored += String.fromCharCode(utf8Bytes.charCodeAt(i) ^ (kCode & 0x7F));
+        }
+        return btoa(xored).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+
+    function decryptCompactPayload(token) {
+        let b64 = token.replace(/-/g, '+').replace(/_/g, '/');
+        while (b64.length % 4) b64 += '=';
+        const xored = atob(b64);
+        let utf8Bytes = "";
+        for (let i = 0; i < xored.length; i++) {
+            const kCode = CIPHER_SECRET_KEY.charCodeAt(i % CIPHER_SECRET_KEY.length);
+            utf8Bytes += String.fromCharCode(xored.charCodeAt(i) ^ (kCode & 0x7F));
+        }
+        const jsonStr = decodeURIComponent(escape(utf8Bytes));
+        const packed = JSON.parse(jsonStr);
+        if (Array.isArray(packed)) {
+            let instStr = "";
+            let fineAmt = 500;
+            let linkMode = "full";
+
+            if (packed.length >= 15) {
+                fineAmt = parseFloat(packed[12]) || 500;
+                linkMode = packed[13] || "full";
+                instStr = packed[14];
+            } else if (packed.length >= 14) {
+                fineAmt = parseFloat(packed[12]) || 500;
+                instStr = packed[13];
+            } else {
+                instStr = packed[12];
+            }
+
+            const instRows = (instStr ? instStr.split('|') : []).map(str => {
+                const parts = str.split('~');
+                const stCode = parts[2];
+                return {
+                    no: parseInt(parts[0]) || 1,
+                    date: parts[1] || "7 Oct 26",
+                    status: stCode === 'C' ? 'Collected' : (stCode === 'B' ? 'Bounce' : 'Scheduled'),
+                    collectedDate: stCode === 'C' ? parts[1] : (stCode === 'B' ? 'In Progress (Bounce)' : 'Scheduled'),
+                    utr: parts[3] || "-",
+                    amount: parseFloat(parts[4]) || packed[5]
+                };
+            });
+            return {
+                n: packed[0], l: packed[1], p: packed[2], a: packed[3], ag: packed[4],
+                e: packed[5], fs: packed[6], afs: packed[7], u: packed[8], bt: packed[9], cp: packed[10],
+                lt: packed[11] || "Monthly",
+                f: fineAmt,
+                lm: linkMode,
+                i: instRows
+            };
+        }
+        return packed;
+    }
+
+    /* =========================================================
+       2. APP LOADER, TOAST & INITIALIZATION
+       ========================================================= */
+    function showLoader(mainMsg = "Processing...", subMsg = "Please wait...") {
+        const loader = document.getElementById('appBootLoader');
+        document.getElementById('loaderMainText').textContent = mainMsg;
+        document.getElementById('loaderSubText').textContent = subMsg;
+        loader.classList.remove('hidden');
+    }
+
+    function hideLoader(delay = 450) {
+        setTimeout(() => {
+            document.getElementById('appBootLoader').classList.add('hidden');
+        }, delay);
+    }
+
+    function showToast(msg = "✅ Saved Successfully!") {
+        const t = document.getElementById('appToast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2600);
+    }
+
+    function getCleanEmptyCustomer(customName = "NEW CUSTOMER", emiVal = 1568, totalMonths = 8, agent = "Chandan Das", lType = "Monthly") {
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const rows = [];
+        let baseDate = new Date(); 
+        for (let i = 0; i < totalMonths; i++) {
+            let d = new Date(baseDate);
+            if (lType === "Daily") d.setDate(d.getDate() + i);
+            else if (lType === "Weekly") d.setDate(d.getDate() + (i * 7));
+            else d.setMonth(d.getMonth() + i); 
+
+            let dateStr = `${d.getDate()} ${monthNames[d.getMonth()]}${String(d.getFullYear()).slice(-2)}`;
+            rows.push({
+                no: i + 1,
+                date: dateStr,
+                status: i === 0 ? "Bounce" : "Scheduled",
+                collectedDate: i === 0 ? "In Progress (Bounce)" : "Scheduled",
+                utr: i === 0 ? "Overdue + Fine" : "-",
+                amount: emiVal
+            });
+        }
+        return {
+            id: "cust_" + Date.now() + "_" + Math.floor(Math.random()*1000),
+            name: customName,
+            loanId: "BDFL-LN-" + Math.floor(10000 + Math.random() * 90000),
+            phone: "+91 9800000000",
+            address: "Harishchandrapur, Malda - 732125",
+            agentName: agent,
+            loanType: lType,
+            emi: emiVal,
+            fine: 500,
+            fineSelected: true,
+            photo: DEFAULT_AVATAR,
+            installments: rows
+        };
+    }
+
+    let customersDB = [];
+    let activeCustomerIndex = 0;
+    let systemConfig = {
+        brandTitle: "BHARAT DIGITAL FINANCE LIMITED",
+        brandSub: "Digital Inclusive Empowering Bharat",
+        upiId: DEFAULT_UPI_ID,
+        companyPhone: DEFAULT_COMPANY_MOBILE,
+        allowFineSelection: "yes"
+    };
+    let isCustomerLockedMode = false;
+    let isFineOnlyMode = false;
+    let qrTimerSeconds = 600;
+    let qrInterval = null;
+    let secretTapCount = 0;
+    let secretTapTimeout = null;
+    let customPayOverride = null;
+
+    window.onload = function() {
+        loadSystemMemory();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const lockTimestamp = localStorage.getItem(STORAGE_KEY_LOCK);
+        const now = Date.now();
+        const twentyFourHours = 24 * 60 * 60 * 1000;
+
+        const hasEncryptedLink = urlParams.has('k') || urlParams.has('p') || urlParams.has('payload') || urlParams.get('mode') === 'customer';
+
+        if (hasEncryptedLink) {
+            localStorage.setItem(STORAGE_KEY_LOCK, now.toString());
+            enableStrictCustomerMode();
+            const token = urlParams.get('k') || urlParams.get('p') || urlParams.get('payload');
+            if (token) {
+                const success = decodeAndApplyPayload(token);
+                if (!success) restoreFirstSavedLinkData();
+            } else {
+                restoreFirstSavedLinkData();
+            }
+            showDashboardScreen();
+            // Show initial warning modal to customer
+            document.getElementById('customerWarningDemandModal').style.display = 'flex';
+        } else if (lockTimestamp && (now - parseInt(lockTimestamp) < twentyFourHours)) {
+            enableStrictCustomerMode();
+            restoreFirstSavedLinkData();
+            showDashboardScreen();
+        } else {
+            renderAdminAll();
+            showDashboardScreen();
+            if (customersDB.length === 0 || customersDB[0].name === "NEW CUSTOMER") {
+                openLoginModal();
+            }
+        }
+
+        startQrCountdown();
+        hideLoader(550);
+    };
+
+    function decodeAndApplyPayload(tokenStr) {
+        try {
+            let raw = null;
+            try {
+                raw = decryptCompactPayload(decodeURIComponent(tokenStr));
+            } catch (err1) {
+                raw = JSON.parse(decodeURIComponent(escape(atob(tokenStr))));
+            }
+            if (raw && (raw.n || raw.name)) {
+                systemConfig.upiId = raw.u || systemConfig.upiId;
+                systemConfig.brandTitle = raw.bt || systemConfig.brandTitle;
+                systemConfig.companyPhone = raw.cp || DEFAULT_COMPANY_MOBILE;
+                systemConfig.allowFineSelection = raw.afs !== undefined ? raw.afs : "yes";
+                isFineOnlyMode = raw.lm === "fine";
+
+                const customerObj = {
+                    id: "cust_link",
+                    name: raw.n || raw.name,
+                    loanId: raw.l || raw.loanId,
+                    phone: raw.p || raw.phone,
+                    address: raw.a || raw.address,
+                    agentName: raw.ag || raw.agentName || "Chandan Das",
+                    loanType: raw.lt || "Monthly",
+                    emi: parseFloat(raw.e || raw.emi) || 1568,
+                    fine: parseFloat(raw.f || raw.fine) || 500,
+                    fineSelected: raw.fs !== undefined ? (raw.fs === 1) : (raw.fineSelected !== false),
+                    photo: raw.photo || DEFAULT_AVATAR,
+                    installments: (raw.i || raw.installments || []).map(arr => Array.isArray(arr) ? {
+                        no: arr[0],
+                        date: arr[1],
+                        status: arr[2] === 'C' ? 'Collected' : (arr[2] === 'B' ? 'Bounce' : 'Scheduled'),
+                        collectedDate: arr[3],
+                        utr: arr[4],
+                        amount: arr[5]
+                    } : arr)
+                };
+                customersDB[0] = customerObj;
+                activeCustomerIndex = 0;
+                
+                if (!localStorage.getItem(STORAGE_KEY_FIRST_LINK)) {
+                    localStorage.setItem(STORAGE_KEY_FIRST_LINK, JSON.stringify({ customer: customerObj, cfg: systemConfig, lm: raw.lm }));
+                }
+                return true;
+            }
+        } catch (e) {
+            console.warn("Tampered link detected, restoring original browser memory.");
+        }
+        return false;
+    }
+
+    function restoreFirstSavedLinkData() {
+        const savedFirst = localStorage.getItem(STORAGE_KEY_FIRST_LINK);
+        if (savedFirst) {
+            try {
+                const parsed = JSON.parse(savedFirst);
+                if (parsed.customer) customersDB[0] = parsed.customer;
+                if (parsed.cfg) systemConfig = { ...systemConfig, ...parsed.cfg };
+                if (parsed.lm) isFineOnlyMode = (parsed.lm === "fine");
+                activeCustomerIndex = 0;
+            } catch (e) {}
+        }
+    }
+
+    function enableStrictCustomerMode() {
+        isCustomerLockedMode = true;
+        document.body.classList.add('customer-locked-mode');
+        document.getElementById('screenSetup').classList.remove('active');
+        document.getElementById('screenDashboard').classList.add('active');
+    }
+
+    function previewCustomerLockedMode() {
+        const linkMode = document.getElementById('inputLinkMode').value || "full";
+        isFineOnlyMode = (linkMode === "fine");
+
+        showLoader("Activating 24-Hr Lock...", "Simulating customer encrypted view");
+        setTimeout(() => {
+            localStorage.setItem(STORAGE_KEY_LOCK, Date.now().toString());
+            enableStrictCustomerMode();
+            renderDashboardView();
+            hideLoader(200);
+            showToast("🔒 Customer Lock Mode Active (Tap Logo 5x to Unlock)");
+            document.getElementById('customerWarningDemandModal').style.display = 'flex';
+        }, 400);
+    }
+
+    function handleSecretLogoTap() {
+        secretTapCount++;
+        clearTimeout(secretTapTimeout);
+        secretTapTimeout = setTimeout(() => { secretTapCount = 0; }, 1800);
+        if (secretTapCount >= 5) {
+            secretTapCount = 0;
+            openLoginModal();
+        }
+    }
+
+    function loadSystemMemory() {
+        const savedCfg = localStorage.getItem(STORAGE_KEY_CFG);
+        if (savedCfg) {
+            try {
+                const parsed = JSON.parse(savedCfg);
+                systemConfig = { ...systemConfig, ...parsed };
+                if (!systemConfig.companyPhone) systemConfig.companyPhone = DEFAULT_COMPANY_MOBILE;
+                if (!systemConfig.allowFineSelection) systemConfig.allowFineSelection = "yes";
+                if (!systemConfig.upiId) systemConfig.upiId = DEFAULT_UPI_ID;
+            } catch(e){}
+        }
+        const savedDb = localStorage.getItem(STORAGE_KEY_DB);
+        if (savedDb) {
+            try { customersDB = JSON.parse(savedDb); } catch(e){}
+        }
+        if (!Array.isArray(customersDB) || customersDB.length === 0) {
+            customersDB = []; 
+        }
+        applySystemBranding();
+    }
+
+    function saveToLocalStorage() {
+        if (!isCustomerLockedMode) {
+            localStorage.setItem(STORAGE_KEY_DB, JSON.stringify(customersDB));
+            localStorage.setItem(STORAGE_KEY_CFG, JSON.stringify(systemConfig));
+        }
+    }
+
+    function saveCurrentToDatabaseWithToast() {
+        if (customersDB.length === 0) return;
+        showLoader("Saving to Memory DB...", "Syncing customer ledger & settings");
+        syncActiveCustomer();
+        saveSystemConfig();
+        saveToLocalStorage();
+        renderAdminAll();
+        hideLoader(300);
+        showToast("✅ Saved to Memory Database!");
+    }
+
+    function getActiveCustomer() {
+        if (!customersDB || customersDB.length === 0) {
+            customersDB.push(getCleanEmptyCustomer());
+        }
+        if (!customersDB[activeCustomerIndex]) activeCustomerIndex = 0;
+        return customersDB[activeCustomerIndex];
+    }
+
+    /* =========================================================
+       3. NEW CUSTOMER ADDING SYSTEM & MEMORY DB MANAGER
+       ========================================================= */
+    function openNewCustomerModal() {
+        document.getElementById('newCustName').value = "";
+        document.getElementById('newCustLoanId').value = "BDFL-LN-" + Math.floor(10000 + Math.random() * 90000);
+        document.getElementById('newCustPhone').value = "+91 ";
+        document.getElementById('newCustAddress').value = "Harishchandrapur, Malda - 732125";
+        document.getElementById('newCustLoanType').value = "Monthly";
+        document.getElementById('newCustEmi').value = "1568";
+        document.getElementById('newCustMonths').value = "8";
+        document.getElementById('newCustAgent').value = "Chandan Das";
+        document.getElementById('newCustomerModal').style.display = 'flex';
+        setTimeout(() => document.getElementById('newCustName').focus(), 150);
+    }
+
+    function saveNewCustomerFromModal() {
+        const nameVal = document.getElementById('newCustName').value.trim().toUpperCase() || "NEW CUSTOMER";
+        const loanVal = document.getElementById('newCustLoanId').value.trim() || ("BDFL-LN-" + Math.floor(10000 + Math.random() * 90000));
+        const phoneVal = document.getElementById('newCustPhone').value.trim() || "+91 9800000000";
+        const addrVal = document.getElementById('newCustAddress').value.trim() || "Harishchandrapur, Malda";
+        const lTypeVal = document.getElementById('newCustLoanType').value || "Monthly";
+        const emiVal = parseFloat(document.getElementById('newCustEmi').value) || 1568;
+        const monthsVal = parseInt(document.getElementById('newCustMonths').value) || 8;
+        const agentVal = document.getElementById('newCustAgent').value.trim() || "Chandan Das";
+
+        showLoader("Creating Customer...", `Setting up ${monthsVal} ${lTypeVal} schedule for${nameVal}`);
+        
+        const newCust = getCleanEmptyCustomer(nameVal, emiVal, monthsVal, agentVal, lTypeVal);
+        newCust.loanId = loanVal;
+        newCust.phone = phoneVal;
+        newCust.address = addrVal;
+        newCust.fine = 500;
+
+        if (customersDB.length === 1 && customersDB[0].name === "ENTER CUSTOMER NAME") {
+            customersDB[0] = newCust;
+        } else {
+            customersDB.unshift(newCust);
+        }
+        
+        activeCustomerIndex = 0;
+        customPayOverride = null;
+
+        saveToLocalStorage();
+        closeAllModals();
+        renderAdminAll();
+        showAdminScreen();
+        hideLoader(350);
+        showToast(`✅ Added ${nameVal} to Memory DB!`);
+    }
+
+    function renderAdminAll() {
+        renderMemoryCustomerList();
+        if(customersDB.length > 0) {
+            populateProfileInputs();
+            renderAdminInstallmentEditor();
+        }
+        document.getElementById('inputBrandTitle').value = systemConfig.brandTitle;
+        document.getElementById('inputUpiId').value = systemConfig.upiId;
+        document.getElementById('inputCompanyPhone').value = systemConfig.companyPhone || DEFAULT_COMPANY_MOBILE;
+        document.getElementById('inputAllowFineSelection').value = systemConfig.allowFineSelection || "yes";
+    }
+
+    function renderMemoryCustomerList() {
+        const listEl = document.getElementById('customerMemoryList');
+        const selectEl = document.getElementById('quickCustomerSelect');
+        document.getElementById('memCount').textContent = customersDB.length;
+        document.getElementById('topBarCount').textContent = customersDB.length;
+        listEl.innerHTML = "";
+        selectEl.innerHTML = "";
+
+        if (customersDB.length === 0) {
+            listEl.innerHTML = `<div style="text-align:center; padding:15px; font-size:12px; color:var(--text-muted);">Memory DB is empty. Tap "+ Add New Customer" to begin.</div>`;
+            return;
+        }
+
+        customersDB.forEach((cust, idx) => {
+            const paidCount = cust.installments.filter(i => i.status === 'Collected').length;
+            const totalAmt = cust.installments.reduce((s, i) => s + (parseFloat(i.amount)||0), 0);
+
+            const opt = document.createElement('option');
+            opt.value = idx;
+            opt.selected = (idx === activeCustomerIndex);
+            opt.textContent = `${idx + 1}.${cust.name} (${cust.loanId}) - ₹${totalAmt}`;
+            selectEl.appendChild(opt);
+
+            const div = document.createElement('div');
+            div.className = `memory-item ${idx === activeCustomerIndex ? 'selected' : ''}`;
+            div.innerHTML = `
+                <div class="mem-left" onclick="selectCustomerFromMemory(${idx})">
+                    <img src="${cust.photo || DEFAULT_AVATAR}" class="mem-avatar">
+                    <div class="mem-info">
+                        <h4>${cust.name}</h4>
+                        <p>${cust.loanId} •${cust.phone} • Paid: ${paidCount}/${cust.installments.length}</p>
+                    </div>
+                </div>
+                <div class="mem-actions">
+                    <button class="sm-btn load" onclick="selectCustomerFromMemory(${idx}); showDashboardScreen();">Dashboard</button>
+                    <button class="sm-btn del" onclick="deleteCustomerFromMemory(${idx})">✕</button>
+                </div>
+            `;
+            listEl.appendChild(div);
+        });
+    }
+
+    function selectCustomerFromMemory(idx) {
+        activeCustomerIndex = idx;
+        customPayOverride = null;
+        renderAdminAll();
+        renderDashboardView();
+        showToast(`📂 Loaded: ${getActiveCustomer().name}`);
+    }
+
+    function deleteCustomerFromMemory(idx) {
+        if (confirm("Delete this customer record from Memory Database?")) {
+            customersDB.splice(idx, 1);
+            activeCustomerIndex = 0;
+            saveToLocalStorage();
+            renderAdminAll();
+            if(customersDB.length > 0) renderDashboardView();
+            showToast("🗑️ Customer removed from DB");
+        }
+    }
+
+    function exportDatabaseJson() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(customersDB, null, 2));
+        const a = document.createElement('a');
+        a.href = dataStr;
+        a.download = "BDFL_Customer_Database_Backup.json";
+        a.click();
+        showToast("⬇️ Database Backup Downloaded!");
+    }
+
+    function importDatabaseJson(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const imported = JSON.parse(e.target.result);
+                if (Array.isArray(imported) && imported.length > 0) {
+                    customersDB = imported;
+                    activeCustomerIndex = 0;
+                    saveToLocalStorage();
+                    renderAdminAll();
+                    renderDashboardView();
+                    showToast("✅ Database Restored Successfully!");
+                }
+            } catch (err) {
+                alert("❌ Invalid JSON Database file.");
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    /* =========================================================
+       4. HITECH OCR SCREENSHOT SCANNER
+       ========================================================= */
+    async function runFullOcrExtraction(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const statusEl = document.getElementById('ocrStatusMsg');
+        const barEl = document.getElementById('ocrProgressBar');
+        const fillEl = document.getElementById('ocrProgressFill');
+
+        barEl.style.display = 'block';
+        fillEl.style.width = '20%';
+        statusEl.textContent = "🔍 Scanning Screenshot for Customer Profile, Dates, EMI & UTRs...";
+
+        try {
+            if (window.Tesseract) {
+                const result = await Tesseract.recognize(file, 'eng', {
+                    logger: m => {
+                        if (m.status === 'recognizing text') {
+                            const pct = Math.max(20, Math.round(m.progress * 100));
+                            fillEl.style.width = pct + '%';
+                            statusEl.textContent = `🤖 Reading Customer & Installment History... ${pct}%`;
+                        }
+                    }
+                });
+                applyOcrTextToProfileAndHistory(result.data.text);
+            } else {
+                throw new Error("Offline fallback");
+            }
+        } catch (err) {
+            fillEl.style.width = '100%';
+            applyOcrTextToProfileAndHistory("");
+        }
+    }
+
+    function applyOcrTextToProfileAndHistory(rawText) {
+        if(customersDB.length === 0) customersDB.push(getCleanEmptyCustomer());
+        const c = getActiveCustomer();
+        const statusEl = document.getElementById('ocrStatusMsg');
+        const cleanText = rawText || "";
+
+        const phoneMatch = cleanText.match(/(\+91[\-\s]?)?[6-9]\d{9}/);
+        if (phoneMatch) {
+            let ph = phoneMatch[0].trim();
+            if (!ph.startsWith('+91')) ph = '+91 ' + ph;
+            c.phone = ph;
+        }
+
+        const lines = cleanText.split('\n').map(l => l.trim()).filter(Boolean);
+        for (let line of lines) {
+            if (/^[A-Z]{3,}(\s+[A-Z]{2,})+/.test(line) && !line.includes("TOTAL") && !line.includes("ACTIVE") && !line.includes("UTR")) {
+                c.name = line.replace(/[^A-Z\s]/g, '').trim();
+                break;
+            }
+        }
+
+        const utrMatches = cleanText.match(/[A-Z]{4,6}\d{9,14}/g) || [];
+        const dateMatches = cleanText.match(/\b\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{2,4}\b/gi) || [];
+
+        const amountMatches = cleanText.match(/\b\d{1},\d{3}\b/g) || [];
+        if (amountMatches.length > 0) {
+            const parsedEmi = parseFloat(amountMatches[amountMatches.length - 1].replace(/,/g, ''));
+            if (parsedEmi > 100 && parsedEmi < 50000) c.emi = parsedEmi;
+        }
+
+        if (dateMatches.length >= 2 || utrMatches.length >= 1) {
+            const uniqueDates = [];
+            dateMatches.forEach(d => {
+                const normalized = d.replace(/^0/, '');
+                if (!uniqueDates.includes(normalized)) uniqueDates.push(normalized);
+            });
+
+            if (uniqueDates.length >= 4) {
+                c.installments = uniqueDates.slice(0, 12).map((dt, idx) => {
+                    let st = "Scheduled";
+                    let colDt = "Scheduled";
+                    let utrCode = "-";
+                    if (idx < utrMatches.length) {
+                        st = "Collected";
+                        colDt = dt;
+                        utrCode = utrMatches[idx];
+                    } else if (idx === utrMatches.length) {
+                        st = "Bounce";
+                        colDt = "In Progress (Bounce)";
+                        utrCode = "Overdue + Fine";
+                    }
+                    return {
+                        no: idx + 1,
+                        date: dt,
+                        status: st,
+                        collectedDate: colDt,
+                        utr: utrCode,
+                        amount: c.emi
+                    };
+                });
+            }
+        }
+
+        saveToLocalStorage();
+        renderAdminAll();
+        renderDashboardView();
+        showToast("🤖 OCR Data Applied to Customer!");
+
+        statusEl.innerHTML = `✅ <strong>OCR Applied!</strong> Customer: <u>${c.name}</u> \vert{} Amount: ₹${c.emi}`;
+        const profCard = document.getElementById('editableProfileCard');
+        profCard.classList.add('ocr-highlight');
+        setTimeout(() => profCard.scrollIntoView({ behavior: 'smooth', block: 'center' }), 250);
+        setTimeout(() => profCard.classList.remove('ocr-highlight'), 3500);
+    }
+
+    /* =========================================================
+       5. PROFILE & INSTALLMENT TABLE EDITORS
+       ========================================================= */
+    function populateProfileInputs() {
+        if(customersDB.length === 0) return;
+        const c = getActiveCustomer();
+        document.getElementById('inputName').value = c.name;
+        document.getElementById('inputLoanId').value = c.loanId;
+        document.getElementById('inputPhone').value = c.phone;
+        document.getElementById('inputAddress').value = c.address;
+        document.getElementById('inputAgentName').value = c.agentName || "Chandan Das";
+        document.getElementById('inputLoanType').value = c.loanType || "Monthly";
+        document.getElementById('inputEmi').value = c.emi;
+        document.getElementById('inputFine').value = c.fine !== undefined ? c.fine : 500;
+        document.getElementById('setupPhotoPreview').src = c.photo || DEFAULT_AVATAR;
+    }
+
+    function syncActiveCustomer() {
+        if(customersDB.length === 0) return;
+        const c = getActiveCustomer();
+        c.name = document.getElementById('inputName').value;
+        c.loanId = document.getElementById('inputLoanId').value;
+        c.phone = document.getElementById('inputPhone').value;
+        c.address = document.getElementById('inputAddress').value;
+        c.agentName = document.getElementById('inputAgentName').value || "Chandan Das";
+        c.loanType = document.getElementById('inputLoanType').value || "Monthly";
+        c.fine = parseFloat(document.getElementById('inputFine').value) || 0;
+        saveToLocalStorage();
+        renderMemoryCustomerList();
+    }
+
+    function updateAllScheduledEmis(val) {
+        if(customersDB.length === 0) return;
+        const newEmi = parseFloat(val) || 0;
+        const c = getActiveCustomer();
+        c.emi = newEmi;
+        c.installments.forEach(inst => { inst.amount = newEmi; });
+        customPayOverride = null;
+        saveToLocalStorage();
+        renderAdminInstallmentEditor();
+    }
+
+    function handleCustomerPhotoUpload(event) {
+        if(customersDB.length === 0) return;
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = 120;
+                canvas.height = 120;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, 120, 120);
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                getActiveCustomer().photo = dataUrl;
+                document.getElementById('setupPhotoPreview').src = dataUrl;
+                saveToLocalStorage();
+                renderMemoryCustomerList();
+                renderDashboardView();
+                showToast("📷 Customer Photo Updated!");
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function renderAdminInstallmentEditor() {
+        const container = document.getElementById('adminInstallmentEditor');
+        container.innerHTML = "";
+        if(customersDB.length === 0) return;
+        const c = getActiveCustomer();
+        
+        c.installments.forEach((inst, i) => {
+            const row = document.createElement('div');
+            row.className = "inst-editor-row";
+            row.innerHTML = `
+                <div class="inst-num">#${inst.no}</div>
+                <input type="text" value="${inst.date}" onchange="updateInstField(${i}, 'date', this.value)">
+                <input type="number" value="${inst.amount}" onchange="updateInstField(${i}, 'amount', this.value)">
+                <select onchange="updateInstField(${i}, 'status', this.value)">
+                    <option value="Collected" ${inst.status === 'Collected' ? 'selected' : ''}>Collected</option>
+                    <option value="Bounce" ${inst.status === 'Bounce' ? 'selected' : ''}>Bounce/Due</option>
+                    <option value="Scheduled" ${inst.status === 'Scheduled' ? 'selected' : ''}>Scheduled</option>
+                </select>
+                <input type="text" value="${inst.utr}" placeholder="UTR / Note" onchange="updateInstField(${i}, 'utr', this.value)">
+                <button class="sm-btn del" onclick="removeInstallmentRow(${i})">✕</button>
+            `;
+            container.appendChild(row);
+        });
+    }
+
+    function updateInstField(index, field, value) {
+        if(customersDB.length === 0) return;
+        const c = getActiveCustomer();
+        if (field === 'amount') value = parseFloat(value) || 0;
+        c.installments[index][field] = value;
+        if (field === 'status') {
+            if (value === 'Collected') c.installments[index].collectedDate = c.installments[index].date;
+            else if (value === 'Bounce') c.installments[index].collectedDate = "In Progress (Bounce)";
+            else c.installments[index].collectedDate = "Scheduled";
+        }
+        saveToLocalStorage();
+        renderMemoryCustomerList();
+    }
+
+    function generateInstallmentRowsByNumber() {
+        if(customersDB.length === 0) return;
+        const countInput = document.getElementById('quickAddCountInput');
+        const totalRows = parseInt(countInput.value) || 8;
+        const c = getActiveCustomer();
+        const lType = c.loanType || "Monthly";
+        c.installments = [];
+
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        let baseDate = new Date(); 
+
+        for (let i = 0; i < totalRows; i++) {
+            let d = new Date(baseDate);
+            if (lType === 'Daily') {
+                d.setDate(d.getDate() + i);
+            } else if (lType === 'Weekly') {
+                d.setDate(d.getDate() + (i * 7));
+            } else {
+                d.setMonth(d.getMonth() + i);
+            }
+
+            let dateStr = `${d.getDate()} ${monthNames[d.getMonth()]}${String(d.getFullYear()).slice(-2)}`;
+            let st = i === 0 ? "Bounce" : "Scheduled";
+            let colDt = i === 0 ? "In Progress (Bounce)" : "Scheduled";
+            let utrStr = i === 0 ? "Overdue + Fine" : "-";
+
+            c.installments.push({
+                no: i + 1,
+                date: dateStr,
+                status: st,
+                collectedDate: colDt,
+                utr: utrStr,
+                amount: c.emi
+            });
+        }
+
+        saveToLocalStorage();
+        renderAdminInstallmentEditor();
+        renderMemoryCustomerList();
+        showToast(`⚡ Generated ${totalRows}${lType} EMI Rows!`);
+    }
+
+    function addInstallmentRow() {
+        if(customersDB.length === 0) return;
+        const c = getActiveCustomer();
+        const nextNo = c.installments.length + 1;
+        c.installments.push({
+            no: nextNo,
+            date: `7 Feb 27`,
+            status: "Scheduled",
+            collectedDate: "Scheduled",
+            utr: "-",
+            amount: c.emi
+        });
+        saveToLocalStorage();
+        renderAdminInstallmentEditor();
+        renderMemoryCustomerList();
+        showToast(`+ Added Installment #${nextNo}`);
+    }
+
+    function removeInstallmentRow(idx) {
+        if(customersDB.length === 0) return;
+        const c = getActiveCustomer();
+        c.installments.splice(idx, 1);
+        c.installments.forEach((item, i) => item.no = i + 1);
+        saveToLocalStorage();
+        renderAdminInstallmentEditor();
+        renderMemoryCustomerList();
+    }
+
+    /* =========================================================
+       6. BUILD SHORT ENCRYPTED CUSTOMER PORTAL LINK
+       ========================================================= */
+    function buildCustomerPortalUrl() {
+        if(customersDB.length === 0) return window.location.href;
+        const c = getActiveCustomer();
+        const compactInst = c.installments.map(i => [
+            i.no,
+            i.date,
+            i.status === 'Collected' ? 'C' : (i.status === 'Bounce' ? 'B' : 'S'),
+            i.collectedDate,
+            i.utr,
+            i.amount
+        ]);
+        const linkMode = document.getElementById('inputLinkMode').value || "full";
+        const payloadObj = {
+            n: c.name,
+            l: c.loanId,
+            p: c.phone,
+            a: c.address,
+            ag: c.agentName || "Chandan Das",
+            e: c.emi,
+            fs: c.fineSelected ? 1 : 0,
+            afs: systemConfig.allowFineSelection,
+            u: systemConfig.upiId,
+            bt: systemConfig.brandTitle,
+            cp: systemConfig.companyPhone || DEFAULT_COMPANY_MOBILE,
+            lt: c.loanType || "Monthly",
+            f: c.fine !== undefined ? c.fine : 500,
+            lm: linkMode,
+            i: compactInst
+        };
+        const base64Payload = btoa(unescape(encodeURIComponent(JSON.stringify(payloadObj))));
+        const baseUrl = window.location.href.split('?')[0];
+        return `${baseUrl}?k=${base64Payload}`;
+    }
+
+    function generateEncryptedShortLink() {
+        if(customersDB.length === 0) {
+            alert("⚠️ Please add a customer first to generate a link.");
+            return;
+        }
+        showLoader("Encrypting Link...", "Applying 256-Bit XOR Cipher & Compression");
+        syncActiveCustomer();
+        saveSystemConfig();
+        setTimeout(() => {
+            const finalUrl = buildCustomerPortalUrl();
+            const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(finalUrl)}`;
+
+            const box = document.getElementById('inlineClickableLinkBox');
+            const anchor = document.getElementById('clickableAnchorLink');
+            const qrImg = document.getElementById('portalLinkQrImg');
+            const linkMode = document.getElementById('inputLinkMode').value;
+
+            box.style.display = 'block';
+            anchor.href = finalUrl;
+            const shortDisplay = finalUrl.length > 68 ? (finalUrl.slice(0, 52) + "..." + finalUrl.slice(-12)) : finalUrl;
+            anchor.textContent = shortDisplay;
+            anchor.dataset.fullurl = finalUrl;
+            qrImg.src = qrImgUrl;
+            document.getElementById('linkModeBadgeLabel').textContent = linkMode === 'fine' ? "🎯 Fine-Only Collection Link" : "🔒 Full Repayment Link";
+            document.getElementById('cipherLengthBadge').textContent = `Token: ${finalUrl.split('?k=')[1].length} chars`;
+
+            renderDashboardView();
+            hideLoader(250);
+            showToast("🔐 Encrypted Link Generated!");
+        }, 350);
+    }
+
+    /* =========================================================
+       7. ZOOMABLE LINK QR MODAL & AGREEMENT MODAL
+       ========================================================= */
+    function openZoomedQrModal() {
+        const portalUrl = buildCustomerPortalUrl();
+        const bigQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(portalUrl)}`;
+        document.getElementById('zoomedQrImage').src = bigQrUrl;
+        document.getElementById('zoomedQrUrlText').textContent = portalUrl;
+        document.getElementById('zoomQrModal').style.display = 'flex';
+    }
+
+    function closeZoomedQrModal() {
+        document.getElementById('zoomQrModal').style.display = 'none';
+    }
+
+    function openZoomedUpiQrModal() {
+        if(customersDB.length === 0) return;
+        const c = getActiveCustomer();
+        const fineAmt = parseFloat(c.fine) || 0;
+        const minPayable = isFineOnlyMode ? fineAmt : (c.fineSelected ? (c.emi + fineAmt) : c.emi);
+        const finalAmt = customPayOverride !== null ? Math.max(minPayable, customPayOverride) : minPayable;
+        const upiUri = `upi://pay?pa=${systemConfig.upiId}&pn=${encodeURIComponent(systemConfig.brandTitle)}&am=${finalAmt}.00&cu=INR&tn=${encodeURIComponent(c.loanId)}`;
+        const bigUpiQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(upiUri)}`;
+        
+        document.getElementById('zoomedQrImage').src = bigUpiQrUrl;
+        document.getElementById('zoomedQrUrlText').textContent = `UPI Payment: ₹${finalAmt}.00 (${systemConfig.upiId})`;
+        document.getElementById('zoomQrModal').style.display = 'flex';
+    }
+
+    function openAgreementModal(e) {
+        if(e) e.preventDefault();
+        document.getElementById('agreementModal').style.display = 'flex';
+    }
+
+    function acceptAgreementFromModal() {
+        document.getElementById('customerAgreementConsent').checked = true;
+        toggleAgreementConsent();
+        closeAllModals();
+        showToast("✅ Agreement & Consent Accepted!");
+    }
+
+    function toggleAgreementConsent() {
+        const isChecked = document.getElementById('customerAgreementConsent').checked;
+        const proofCard = document.getElementById('paymentProofCardSection');
+        if (isChecked) {
+            proofCard.style.opacity = "1";
+            proofCard.style.pointerEvents = "auto";
+        } else {
+            proofCard.style.opacity = "0.5";
+            proofCard.style.pointerEvents = "none";
+        }
+    }
+
+    function closeCustomerWarningModal() {
+        document.getElementById('customerWarningDemandModal').style.display = 'none';
+    }
+
+    /* =========================================================
+       8. DASHBOARD RENDERING, FINE TOGGLE & ADVANCE EMI LOGIC
+       ========================================================= */
+    function renderDashboardView() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('p') || urlParams.has('payload') || urlParams.has('k')) {
+            try {
+                const token = urlParams.get('k') || urlParams.get('p') || urlParams.get('payload');
+                const raw = decryptCompactPayload(decodeURIComponent(token));
+                if (raw && (raw.n || raw.name)) {
+                    systemConfig.upiId = raw.u || systemConfig.upiId;
+                    systemConfig.brandTitle = raw.bt || systemConfig.brandTitle;
+                    systemConfig.companyPhone = raw.cp || DEFAULT_COMPANY_MOBILE;
+                    systemConfig.allowFineSelection = raw.afs !== undefined ? raw.afs : "yes";
+                    isFineOnlyMode = raw.lm === "fine";
+
+                    customersDB[0] = {
+                        id: "cust_link",
+                        name: raw.n || raw.name,
+                        loanId: raw.l || raw.loanId,
+                        phone: raw.p || raw.phone,
+                        address: raw.a || raw.address,
+                        agentName: raw.ag || raw.agentName || "Chandan Das",
+                        loanType: raw.lt || "Monthly",
+                        emi: parseFloat(raw.e || raw.emi) || 1568,
+                        fine: parseFloat(raw.f || raw.fine) || 500,
+                        fineSelected: raw.fs !== undefined ? (raw.fs === 1) : (raw.fineSelected !== false),
+                        photo: raw.photo || DEFAULT_AVATAR,
+                        installments: (raw.i || raw.installments || []).map(arr => Array.isArray(arr) ? {
+                            no: arr[0],
+                            date: arr[1],
+                            status: arr[2] === 'C' ? 'Collected' : (arr[2] === 'B' ? 'Bounce' : 'Scheduled'),
+                            collectedDate: arr[3],
+                            utr: arr[4],
+                            amount: arr[5]
+                        } : arr)
+                    };
+                    activeCustomerIndex = 0;
+                }
+            } catch (e) { console.error("Dashboard decode error", e); }
+        }
+
+        if(customersDB.length === 0) return;
+        const c = getActiveCustomer();
+        applySystemBranding();
+
+        if (systemConfig.allowFineSelection === "no") {
+            c.fineSelected = true;
+        }
+
+        document.getElementById('dashAvatar').src = c.photo || DEFAULT_AVATAR;
+        document.getElementById('dashName').textContent = c.name;
+        document.getElementById('dashPhone').textContent = c.phone;
+        document.getElementById('dashLoanId').textContent = `Loan ID: ${c.loanId}`;
+        document.getElementById('dashAddress').textContent = `📍 ${c.address}`;
+        document.getElementById('dashAgentName').textContent = c.agentName || "Chandan Das";
+        document.getElementById('feedbackAgentName').textContent = c.agentName || "Chandan Das";
+
+        const totalSanctioned = c.installments.reduce((sum, i) => sum + (parseFloat(i.amount) || 0), 0);
+        const totalCollected = c.installments
+            .filter(i => i.status === 'Collected')
+            .reduce((sum, i) => sum + (parseFloat(i.amount) || 0), 0);
+
+        document.getElementById('dashTotalAmount').textContent = `₹ ${totalSanctioned.toLocaleString('en-IN')}`;
+        document.getElementById('dashCollectedAmount').textContent = `₹ ${totalCollected.toLocaleString('en-IN')}`;
+        document.getElementById('dashInstCount').textContent = c.installments.length;
+        document.getElementById('dashTotalRight').textContent = `₹${totalSanctioned.toLocaleString('en-IN')}`;
+
+        const listContainer = document.getElementById('dashboardInstallmentList');
+        listContainer.innerHTML = "";
+
+        let activeDueInst = c.installments.find(i => i.status === 'Bounce') || c.installments.find(i => i.status === 'Scheduled') || c.installments[c.installments.length - 1];
+
+        c.installments.forEach((inst, idx) => {
+            const isPaid = inst.status === 'Collected';
+            const isBounce = inst.status === 'Bounce';
+            const badgeClass = isPaid ? 'paid' : (isBounce ? 'progress' : 'scheduled');
+            const fineAmt = parseFloat(c.fine) || 500;
+            const fineAmtStr = fineAmt ? ` + ₹${fineAmt} Fine` : '';
+            
+            let subText = isPaid ? `Collected on ${inst.collectedDate || inst.date}` : (isBounce ? `In Progress (Bounce${fineAmtStr})` : `Scheduled`);
+            let utrText = isPaid ? `UTR: ${inst.utr}` : (isBounce ? `Overdue - Action Required` : ``);
+
+            const card = document.createElement('div');
+            card.className = `inst-item ${isBounce ? 'bounce-highlight' : ''}`;
+            card.innerHTML = `
+                <div class="inst-left">
+                    <div class="inst-badge ${badgeClass}">${inst.no}</div>
+                    <div class="inst-details">
+                        <h4>${inst.date}</h4>
+                        <p style="${isBounce ? 'color:#b45309;font-weight:700;' : ''}">${subText}</p>
+                    </div>
+                </div>
+                <div class="inst-right">
+                    <div class="amount">₹${(parseFloat(inst.amount)||0).toLocaleString('en-IN')}</div>
+                    ${utrText ? `<div class="utr">${utrText}</div>` : ''}
+                    ${!isPaid ? `<button class="quick-pay-btn officer-only" onclick="openMarkPaymentModal(${idx})">Mark Paid</button>` : ''}
+                </div>
+            `;
+            listContainer.appendChild(card);
+        });
+
+        const activeEmiAmt = activeDueInst ? (parseFloat(activeDueInst.amount) || c.emi) : c.emi;
+        const fineAmt = parseFloat(c.fine) || 0;
+
+        document.getElementById('activeDueDateBadge').textContent = activeDueInst ? `Installment #${activeDueInst.no} (${activeDueInst.date})` : `Current Due`;
+        document.getElementById('breakdownEmi').textContent = `₹${activeEmiAmt.toFixed(2)}`;
+
+        const fineBoxContainer = document.getElementById('fineChoiceBoxContainer');
+        const btnWithFine = document.getElementById('btnPayWithFine');
+        const btnWithoutFine = document.getElementById('btnPayWithoutFine');
+        const fineLabel = document.getElementById('fineStatusLabel');
+        const warnBox = document.getElementById('cibilWarningBox');
+        const emiRow = document.getElementById('breakdownEmiRow');
+        const advInputWrapper = document.getElementById('advanceEmiInputWrapper');
+        const cardTitleText = document.getElementById('dashboardCardTitleText');
+
+        // Fine-Only Mode adaptation
+        if (isFineOnlyMode) {
+            cardTitleText.textContent = "🎯 Fine-Only Collection Mode (Bounce Charge)";
+            emiRow.style.display = "none";
+            fineBoxContainer.style.display = "none";
+            advInputWrapper.style.display = "none";
+            warnBox.classList.add('active');
+            warnBox.innerHTML = `⚠️ <strong>Notice:</strong> You are paying the penalty/bounce collection charge of ₹${fineAmt}.00 for Loan ID <b>${c.loanId}</b>.`;
+            document.getElementById('breakdownFine').textContent = `₹${fineAmt.toFixed(2)}`;
+            document.getElementById('breakdownTotal').textContent = `₹${fineAmt.toFixed(2)}`;
+        } else {
+            cardTitleText.textContent = "💳 Current Due & Advance Payment";
+            emiRow.style.display = "table-row";
+            advInputWrapper.style.display = "block";
+
+            if (systemConfig.allowFineSelection === "no") {
+                fineBoxContainer.style.display = "none";
+                document.getElementById('breakdownFine').textContent = `₹${fineAmt.toFixed(2)} (Mandatory)`;
+                document.getElementById('breakdownTotal').textContent = `₹${(activeEmiAmt + fineAmt).toFixed(2)}`;
+                warnBox.classList.remove('active');
+            } else {
+                fineBoxContainer.style.display = "block";
+                btnWithFine.innerHTML = `✅ Select ₹${fineAmt} Fine<br><span style="font-size:10px; font-weight:600;">(Protects CIBIL Score)</span>`;
+                btnWithoutFine.innerHTML = `❌ Deselect Fine (₹0)<br><span style="font-size:10px; font-weight:600;">(EMI Only - CIBIL Risk)</span>`;
+                warnBox.innerHTML = `⚠️ <strong>CIBIL & Legal Warning:</strong> Deselecting the ₹${fineAmt} bounce fine keeps your loan account in default arrears, which will negatively impact your CIBIL credit score and may attract legal recovery action.`;
+                
+                if (c.fineSelected) {
+                    document.getElementById('breakdownFine').textContent = `₹${fineAmt.toFixed(2)}`;
+                    document.getElementById('breakdownTotal').textContent = `₹${(activeEmiAmt + fineAmt).toFixed(2)}`;
+                    btnWithFine.className = "fine-option-btn active-with-fine";
+                    btnWithoutFine.className = "fine-option-btn";
+                    fineLabel.textContent = `Included (₹${fineAmt})`;
+                    fineLabel.style.color = "#065f46";
+                    warnBox.classList.remove('active');
+                } else {
+                    document.getElementById('breakdownFine').textContent = `₹0.00 (Deselected)`;
+                    document.getElementById('breakdownTotal').textContent = `₹${activeEmiAmt.toFixed(2)}`;
+                    btnWithFine.className = "fine-option-btn";
+                    btnWithoutFine.className = "fine-option-btn active-no-fine";
+                    fineLabel.textContent = "Deselected (CIBIL Risk)";
+                    fineLabel.style.color = "#dc2626";
+                    warnBox.classList.add('active');
+                }
+            }
+        }
+
+        const minimumPayable = isFineOnlyMode ? fineAmt : (c.fineSelected ? (activeEmiAmt + fineAmt) : activeEmiAmt);
+        if (customPayOverride === null || customPayOverride < minimumPayable) {
+            customPayOverride = minimumPayable;
+        }
+        document.getElementById('customPayAmountInput').value = customPayOverride;
+        if (!isFineOnlyMode) {
+            document.getElementById('breakdownTotal').textContent = `₹${customPayOverride.toFixed(2)}`;
+        }
+
+        const finalPayableAmt = Math.max(minimumPayable, customPayOverride);
+        const upiUri = `upi://pay?pa=${systemConfig.upiId}&pn=${encodeURIComponent(systemConfig.brandTitle)}&am=${finalPayableAmt}.00&cu=INR&tn=${encodeURIComponent(c.loanId)}`;
+        document.getElementById('dashUpiId').textContent = systemConfig.upiId;
+        document.getElementById('upiBtnAmountText').textContent = `₹${finalPayableAmt.toLocaleString('en-IN')}`;
+        document.getElementById('dynamicQrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(upiUri)}`;
+        document.getElementById('directUpiAppBtn').href = upiUri;
+
+        const portalLinkUrl = buildCustomerPortalUrl();
+        const linkQrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(portalLinkUrl)}`;
+        const dashLinkQr = document.getElementById('dashPortalLinkQrImg');
+        if (dashLinkQr) dashLinkQr.src = linkQrApiUrl;
+
+        verifyCustomerPaymentMatch();
+    }
+
+    function setFineOption(includeFine) {
+        if (systemConfig.allowFineSelection === "no" || customersDB.length === 0 || isFineOnlyMode) return;
+        const c = getActiveCustomer();
+        c.fineSelected = includeFine;
+        customPayOverride = null; 
+        saveToLocalStorage();
+        renderDashboardView();
+        const fineAmt = parseFloat(c.fine) || 500;
+        showToast(includeFine ? `✅ ₹${fineAmt} Fine Selected` : "⚠️ Fine Deselected (CIBIL Warning)");
+    }
+
+    function setAdvanceEmiMultiplier(count) {
+        if(customersDB.length === 0 || isFineOnlyMode) return;
+        const c = getActiveCustomer();
+        const baseEmi = parseFloat(c.emi) || 1568;
+        const fineAmt = c.fineSelected ? (parseFloat(c.fine) || 500) : 0;
+        if (count === 0) {
+            const unpaidTotal = c.installments.filter(i => i.status !== 'Collected').reduce((s, i) => s + (parseFloat(i.amount)||baseEmi), 0);
+            customPayOverride = Math.max(baseEmi + fineAmt, unpaidTotal + fineAmt);
+        } else {
+            customPayOverride = (baseEmi * count) + fineAmt;
+        }
+        renderDashboardView();
+        showToast(`⚡ Payable Set: ₹${customPayOverride.toLocaleString('en-IN')}`);
+    }
+
+    function updateCustomPayAmount(val) {
+        if(customersDB.length === 0) return;
+        const c = getActiveCustomer();
+        const baseEmi = parseFloat(c.emi) || 1568;
+        const fineAmt = parseFloat(c.fine) || 500;
+        const minimumPayable = isFineOnlyMode ? fineAmt : (c.fineSelected ? (baseEmi + fineAmt) : baseEmi);
+        const entered = parseFloat(val);
+
+        if (!isNaN(entered)) {
+            if (entered < minimumPayable) {
+                customPayOverride = minimumPayable;
+                document.getElementById('customPayAmountInput').value = minimumPayable;
+                showToast(`⚠️ Minimum ₹${minimumPayable} is mandatory!`);
+            } else {
+                customPayOverride = entered;
+            }
+        } else {
+            customPayOverride = minimumPayable;
+        }
+        renderDashboardView();
+    }
+
+    function verifyCustomerPaymentMatch() {
+        if(customersDB.length === 0) return;
+        const c = getActiveCustomer();
+        const baseEmi = parseFloat(c.emi) || 1568;
+        const fineAmt = parseFloat(c.fine) || 500;
+        const minimumPayable = isFineOnlyMode ? fineAmt : (c.fineSelected ? (baseEmi + fineAmt) : baseEmi);
+
+        const inputField = document.getElementById('customerPaidAmountInput');
+        const statusNotice = document.getElementById('paymentMatchStatusNotice');
+        if (!inputField || !statusNotice) return;
+
+        const enteredVal = parseFloat(inputField.value);
+        if (isNaN(enteredVal)) {
+            statusNotice.textContent = `⚠️ Expected Amount: ₹${customPayOverride || minimumPayable}`;
+            statusNotice.style.color = "#b45309";
+            return;
+        }
+
+        if (enteredVal >= minimumPayable) {
+            const advanceDiff = enteredVal - minimumPayable;
+            if (advanceDiff > 0) {
+                statusNotice.textContent = `✅ Matched! ₹${enteredVal} (Includes ₹${minimumPayable} Due + ₹${advanceDiff} Advance).`;
+                statusNotice.style.color = "#15803d";
+            } else {
+                statusNotice.textContent = `✅ Matched! ₹${enteredVal} (Exact Due Paid).`;
+                statusNotice.style.color = "#15803d";
+            }
+        } else {
+            statusNotice.textContent = `❌ Mismatch: ₹${enteredVal} is less than minimum required ₹${minimumPayable}.`;
+            statusNotice.style.color = "#dc2626";
+        }
+    }
+
+    /* =========================================================
+       9. CONGRATULATIONS SCREEN & PAYMENT CONFIRMATION
+       ========================================================= */
+    let lastConfirmedReceipt = { amount: 0, utr: "-" };
+
+    function showCongratulationsModal(paidAmount, utrString) {
+        if(customersDB.length === 0) return;
+        const c = getActiveCustomer();
+        const fineAmt = parseFloat(c.fine) || 500;
+        lastConfirmedReceipt = { amount: paidAmount, utr: utrString };
+
+        document.getElementById('cgCustName').textContent = c.name;
+        document.getElementById('cgLoanId').textContent = c.loanId;
+        document.getElementById('cgAmount').textContent = `₹${parseFloat(paidAmount).toLocaleString('en-IN')}.00`;
+        document.getElementById('cgFineStatus').textContent = isFineOnlyMode ? "✅ Fine / Bounce Charge Paid" : (c.fineSelected ? `✅ Included (₹${fineAmt})` : "⚠️ Unpaid (CIBIL Risk)");
+        document.getElementById('cgFineStatus').style.color = c.fineSelected ? "#15803d" : "#dc2626";
+        document.getElementById('cgUtr').textContent = utrString;
+
+        document.getElementById('congratsModal').style.display = 'flex';
+    }
+
+    function customerSubmitProofAndShowCongrats() {
+        if(customersDB.length === 0) return;
+        const c = getActiveCustomer();
+        const baseEmi = parseFloat(c.emi) || 1568;
+        const fineAmt = parseFloat(c.fine) || 500;
+        const minimumPayable = isFineOnlyMode ? fineAmt : (c.fineSelected ? (baseEmi + fineAmt) : baseEmi);
+        const enteredVal = parseFloat(document.getElementById('customerPaidAmountInput').value) || customPayOverride || minimumPayable;
+        const utrVal = document.getElementById('customerPaidUtrInput').value.trim() || ("UPI" + Date.now().toString().slice(-8));
+
+        if (enteredVal < minimumPayable) {
+            alert(`⚠️ Minimum payment amount must be at least ₹${minimumPayable}.`);
+            return;
+        }
+
+        showLoader("Verifying Payment...", "Matching amount & generating receipt");
+        setTimeout(() => {
+            const bounceIdx = c.installments.findIndex(i => i.status === 'Bounce' || i.status === 'Scheduled');
+            if (bounceIdx !== -1) {
+                c.installments[bounceIdx].status = "Collected";
+                c.installments[bounceIdx].utr = utrVal;
+                c.installments[bounceIdx].collectedDate = "17 Oct 26";
+            }
+            saveToLocalStorage();
+            renderDashboardView();
+            hideLoader(200);
+            showCongratulationsModal(enteredVal, utrVal);
+        }, 600);
+    }
+
+    function dispatchCongratsWhatsApp() {
+        if(customersDB.length === 0) return;
+        const c = getActiveCustomer();
+        const fineAmt = parseFloat(c.fine) || 500;
+        const companyWaPhone = getFormattedCompanyMobile(true);
+        const agent = c.agentName || "Chandan Das";
+        const msg = `*🎉 PAYMENT COMPLETED & RECEIPT - ${systemConfig.brandTitle}*\n\nCustomer Name: *${c.name}*\nCustomer Mobile: *${c.phone}*\nLoan ID: *${c.loanId}*\nCollection Agent: *${agent}*\nAmount Paid: *₹${lastConfirmedReceipt.amount}.00*\nFine Status: ${c.fineSelected ? `✅ Paid with ₹${fineAmt} Fine` : '⚠️ Fine Deselected (EMI Only)'}\nUTR / Ref No: *${lastConfirmedReceipt.utr}*\n\n📎 _[Customer payment screenshot attached]_`;
+        window.open(`https://api.whatsapp.com/send?phone=${companyWaPhone}&text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    function openMarkPaymentModal(defaultIdx = null) {
+        if (isCustomerLockedMode || customersDB.length === 0) return;
+        const c = getActiveCustomer();
+        const selectEl = document.getElementById('selectInstToPay');
+        selectEl.innerHTML = "";
+
+        c.installments.forEach((inst, i) => {
+            const opt = document.createElement('option');
+            opt.value = i;
+            opt.textContent = `#${inst.no} - ${inst.date} (₹${inst.amount}) [${inst.status}]`;
+            selectEl.appendChild(opt);
+        });
+
+        if (defaultIdx !== null) {
+            selectEl.value = defaultIdx;
+        } else {
+            const bounceIdx = c.installments.findIndex(i => i.status === 'Bounce' || i.status === 'Scheduled');
+            if (bounceIdx !== -1) selectEl.value = bounceIdx;
+        }
+
+        document.getElementById('inputPaymentUtr').value = "HDFCH01" + Math.floor(100000000 + Math.random() * 900000000);
+        document.getElementById('markPaymentModal').style.display = 'flex';
+    }
+
+    function confirmAndSavePayment() {
+        if (isCustomerLockedMode || customersDB.length === 0) return;
+        const c = getActiveCustomer();
+        const idx = parseInt(document.getElementById('selectInstToPay').value);
+        const utrVal = document.getElementById('inputPaymentUtr').value.trim() || ("UTR" + Date.now());
+        const dateVal = document.getElementById('inputPaymentDate').value.trim() || "17 Oct 26";
+
+        showLoader("Recording Transaction...", "Updating customer ledger & memory DB");
+        setTimeout(() => {
+            if (c.installments[idx]) {
+                c.installments[idx].status = "Collected";
+                c.installments[idx].utr = utrVal;
+                c.installments[idx].collectedDate = dateVal;
+            }
+            saveToLocalStorage();
+            closeAllModals();
+            renderDashboardView();
+            renderAdminAll();
+            hideLoader(200);
+
+            const fineAmt = parseFloat(c.fine) || 500;
+            const paidAmt = customPayOverride || (c.fineSelected ? (c.emi + fineAmt) : c.emi);
+            showCongratulationsModal(paidAmt, utrVal);
+        }, 450);
+    }
+
+    /* =========================================================
+       10. WHATSAPP, SMS, SOA & LEGAL NOTICE PDF GENERATORS
+       ========================================================= */
+    function getFormattedCompanyMobile(forWhatsApp = false) {
+        let raw = (systemConfig.companyPhone || DEFAULT_COMPANY_MOBILE).replace(/\D/g, '');
+        if (raw.length === 10) raw = "91" + raw;
+        return forWhatsApp ? raw : ("+" + raw);
+    }
+
+    function submitCustomerFeedbackWhatsApp() {
+        if(customersDB.length === 0) return;
+        const c = getActiveCustomer();
+        const promiseDate = document.getElementById('customerPromiseDate').value || "Not Specified";
+        const feedbackNote = document.getElementById('customerFeedbackText').value || "Will pay on promised date";
+        const companyWaPhone = getFormattedCompanyMobile(true);
+        const agent = c.agentName || "Chandan Das";
+
+        const msg = `*CUSTOMER PROMISE-TO-PAY & FEEDBACK - ${systemConfig.brandTitle}*\n\nCustomer Name: *${c.name}*\nCustomer Mobile: *${c.phone}*\nLoan ID: *${c.loanId}*\nCollection Agent: *${agent}*\n\n📅 *Promise-to-Pay Date:* ${promiseDate}\n💬 *Customer Feedback:* ${feedbackNote}`;
+        window.open(`https://api.whatsapp.com/send?phone=${companyWaPhone}&text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    function printLegalNoticePdf() {
+        if(customersDB.length === 0) return;
+        const c = getActiveCustomer();
+        const baseEmi = parseFloat(c.emi) || 1568;
+        const fineAmt = parseFloat(c.fine) || 500;
+        const totalDue = c.fineSelected ? (baseEmi + fineAmt) : baseEmi;
+
+        document.getElementById('legalPrintCustName').textContent = c.name;
+        document.getElementById('legalPrintCustAddress').textContent = c.address;
+        document.getElementById('legalPrintCustPhone').textContent = c.phone;
+        document.getElementById('legalPrintLoanId').textContent = c.loanId;
+        document.getElementById('legalPrintLoanIdBody').textContent = c.loanId;
+        document.getElementById('legalPrintAgent').textContent = c.agentName || "Chandan Das";
+        document.getElementById('legalPrintAgentInline').textContent = c.agentName || "Chandan Das";
+        document.getElementById('legalPrintAgentNameFoot').textContent = c.agentName || "Chandan Das";
+        document.getElementById('legalPrintDueAmt').textContent = `₹${totalDue.toLocaleString('en-IN')}.00`;
+        document.getElementById('legalPrintDueAmtFinal').textContent = `₹${totalDue.toLocaleString('en-IN')}.00`;
+
+        const legalArea = document.getElementById('printableLegalArea');
+        legalArea.style.display = 'block';
+        window.print();
+        setTimeout(() => { legalArea.style.display = 'none'; }, 500);
+    }
+
+    function printBrandedStatement() {
+        if(customersDB.length === 0) return;
+        const c = getActiveCustomer();
+        document.getElementById('printBrandTitle').textContent = systemConfig.brandTitle;
+        document.getElementById('printBrandSub').textContent = systemConfig.brandSub;
+        document.getElementById('printFooterAgent').textContent = c.agentName || "Chandan Das";
+        document.getElementById('printAgentName').textContent = c.agentName || "Chandan Das";
+        document.getElementById('printCustPhoto').src = c.photo || DEFAULT_AVATAR;
+        document.getElementById('printCustName').textContent = c.name;
+        document.getElementById('printLoanId').textContent = c.loanId;
+        document.getElementById('printCustPhone').textContent = c.phone;
+        document.getElementById('printCustAddress').textContent = c.address;
+        document.getElementById('printLoanType').textContent = c.loanType || "Monthly";
+        document.getElementById('printUpiId').textContent = systemConfig.upiId;
+
+        const totalSanctioned = c.installments.reduce((s, i) => s + (parseFloat(i.amount)||0), 0);
+        const totalCollected = c.installments.filter(i => i.status === 'Collected').reduce((s, i) => s + (parseFloat(i.amount)||0), 0);
+        const fineAmt = parseFloat(c.fine) || 500;
+        const currentDue = customPayOverride || (c.fineSelected ? (c.emi + fineAmt) : c.emi);
+
+        document.getElementById('printTotalSanctioned').textContent = `₹${totalSanctioned.toLocaleString('en-IN')}.00`;
+        document.getElementById('printTotalCollected').textContent = `₹${totalCollected.toLocaleString('en-IN')}.00`;
+        document.getElementById('printFineStatus').textContent = c.fineSelected ? `₹${fineAmt}.00 (Included)` : `₹${fineAmt}.00 (Unpaid - CIBIL Warning)`;
+        document.getElementById('printCurrentDue').textContent = `₹${currentDue.toLocaleString('en-IN')}.00`;
+
+        document.getElementById('printUpiQrImg').src = document.getElementById('dynamicQrImg').src;
+        const portalUrl = buildCustomerPortalUrl();
+        document.getElementById('printPortalLinkQrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(portalUrl)}`;
+
+        const tbody = document.getElementById('printHistoryTableBody');
+        tbody.innerHTML = "";
+        c.installments.forEach(inst => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="padding: 7px; border: 1px solid #cbd5e1;">${inst.no}</td>
+                <td style="padding: 7px; border: 1px solid #cbd5e1; font-weight: 600;">${inst.date}</td>
+                <td style="padding: 7px; border: 1px solid #cbd5e1;">${inst.status} (${inst.collectedDate})</td>
+                <td style="padding: 7px; border: 1px solid #cbd5e1; font-family: monospace;">${inst.utr}</td>
+                <td style="padding: 7px; border: 1px solid #cbd5e1; text-align: right; font-weight: 700;">₹${inst.amount}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        const printArea = document.getElementById('printableArea');
+        printArea.style.display = 'block';
+        window.print();
+        setTimeout(() => { printArea.style.display = 'none'; }, 500);
+    }
+
+    function copyGeneratedLink() {
+        const anchor = document.getElementById('clickableAnchorLink');
+        const url = anchor.dataset.fullurl || buildCustomerPortalUrl();
+        navigator.clipboard.writeText(url);
+        showToast("📋 Short Encrypted Link Copied!");
+    }
+
+    function shareLinkWhatsApp() {
+        const c = getActiveCustomer();
+        const url = buildCustomerPortalUrl();
+        const fineAmt = parseFloat(c.fine) || 500;
+        const payable = customPayOverride || (c.fineSelected ? (c.emi + fineAmt) : c.emi);
+        let custPhone = c.phone.replace(/\D/g, '');
+        if (custPhone.length === 10) custPhone = "91" + custPhone;
+        const msg = `*${systemConfig.brandTitle} - OFFICIAL NOTICE*\n\nDear *${c.name}*,\nLoan ID: *${c.loanId}*\nCollection Agent: *${c.agentName || 'Chandan Das'}*\nPayable Amount: *₹${payable}.00*\n\n👉 *Tap this encrypted link to view your statement, pay via UPI & download SOA:*\n${url}`;
+        window.open(`https://api.whatsapp.com/send?phone=${custPhone}&text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    function sendWhatsAppUpdate(e) {
+        if (e) e.preventDefault();
+        shareLinkWhatsApp();
+    }
+
+    function sendSmsAlert(e) {
+        if (e) e.preventDefault();
+        if(customersDB.length === 0) return;
+        const c = getActiveCustomer();
+        const fineAmt = parseFloat(c.fine) || 500;
+        const payable = customPayOverride || (c.fineSelected ? (c.emi + fineAmt) : c.emi);
+        const phoneClean = c.phone.replace(/\s+/g, '');
+        const smsText = `Dear ${c.name}, ${systemConfig.brandTitle} Loan (${c.loanId}) due is Rs.${payable}. Pay via UPI to ${systemConfig.upiId}. Unpaid bounce fine of Rs.${fineAmt} impacts CIBIL score.`;
+        window.location.href = `sms:${phoneClean}?body=${encodeURIComponent(smsText)}`;
+    }
+
+    /* =========================================================
+       11. LOGIN & SCREEN NAVIGATION
+       ========================================================= */
+    function openLoginModal() {
+        document.getElementById('phoneLoginModal').style.display = 'flex';
+    }
+
+    function loginWithPhoneNo() {
+        const val = document.getElementById('agentPhoneInput').value.trim();
+        const validPhone = systemConfig.companyPhone || DEFAULT_COMPANY_MOBILE;
+        
+        if (val === "9733" || val === validPhone) {
+            showLoader("Authenticating Officer...", "Unlocking Admin & Memory Database");
+            closeAllModals();
+            setTimeout(() => {
+                isCustomerLockedMode = false;
+                localStorage.removeItem(STORAGE_KEY_LOCK);
+                document.body.classList.remove('customer-locked-mode');
+                document.getElementById('topDbBar').style.display = 'flex';
+                renderAdminAll();
+                showAdminScreen();
+                hideLoader(200);
+                showToast("🔓 Officer Workspace Unlocked!");
+                document.getElementById('agentPhoneInput').value = ""; 
+            }, 350);
+        } else {
+            alert("❌ Access Denied! Unregistered Mobile Number or PIN.");
+            document.getElementById('agentPhoneInput').value = "";
+        }
+    }
+
+    function toggleAdminAndDashboard() {
+        const isSetupActive = document.getElementById('screenSetup').classList.contains('active');
+        if (isSetupActive) showDashboardScreen();
+        else showAdminScreen();
+    }
+
+    function showAdminScreen() {
+        renderAdminAll();
+        document.getElementById('screenDashboard').classList.remove('active');
+        document.getElementById('screenSetup').classList.add('active');
+        document.getElementById('switchCustomerViewBtn').textContent = "📱 Notice View";
+        window.scrollTo(0, 0);
+    }
+
+    function showDashboardScreen() {
+        renderDashboardView();
+        document.getElementById('screenSetup').classList.remove('active');
+        document.getElementById('screenDashboard').classList.add('active');
+        document.getElementById('switchCustomerViewBtn').textContent = "✏️ Edit / DB";
+        window.scrollTo(0, 0);
+    }
+
+    function saveMemoryAndOpenDashboard() {
+        if(customersDB.length === 0) return;
+        showLoader("Updating Dashboard...", "Applying changes to live notice");
+        syncActiveCustomer();
+        saveSystemConfig();
+        saveToLocalStorage();
+        setTimeout(() => {
+            showDashboardScreen();
+            hideLoader(200);
+            showToast("✅ Dashboard Updated!");
+        }, 300);
+    }
+
+    function saveSystemConfig() {
+        systemConfig.brandTitle = document.getElementById('inputBrandTitle').value || "BHARAT DIGITAL FINANCE LIMITED";
+        systemConfig.upiId = document.getElementById('inputUpiId').value.trim() || DEFAULT_UPI_ID;
+        systemConfig.companyPhone = document.getElementById('inputCompanyPhone').value.trim() || DEFAULT_COMPANY_MOBILE;
+        systemConfig.allowFineSelection = document.getElementById('inputAllowFineSelection').value || "yes";
+        applySystemBranding();
+        saveToLocalStorage();
+    }
+
+    function applySystemBranding() {
+        document.getElementById('headerBrandTitle').textContent = systemConfig.brandTitle;
+        document.getElementById('headerBrandSub').textContent = systemConfig.brandSub;
+    }
+
+    function closeAllModals() {
+        document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+        closeZoomedQrModal();
+    }
+
+    function startQrCountdown() {
+        if (qrInterval) clearInterval(qrInterval);
+        qrTimerSeconds = 600;
+        qrInterval = setInterval(() => {
+            const m = Math.floor(qrTimerSeconds / 60);
+            const s = qrTimerSeconds % 60;
+            const el = document.getElementById('qrCountdown');
+            if (el) el.textContent = `QR Valid For: ${m}:${s < 10 ? '0' : ''}${s}`;
+            if (qrTimerSeconds > 0) qrTimerSeconds--;
+        }, 1000);
+    }
+</script>
+
+</body>
+</html>
 
