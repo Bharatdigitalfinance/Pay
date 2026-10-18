@@ -171,16 +171,11 @@
         .payment-proof-card { background: #f0fdf4; border: 1.5px dashed #4ade80; padding: 10px; border-radius: 8px; margin-top: 8px; text-align: center; }
         .payment-proof-card input[type="file"] { margin-top: 5px; font-size: 10px; width: 100%; }
 
-        /* Clean Payment Method Selector Section (No Dynamic QR) */
         .payment-method-section { background: #ffffff; border: 1px solid #e2e8f0; padding: 16px; border-radius: 12px; text-align: center; margin-top: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); }
         .payment-method-title { font-size: 13px; font-weight: 800; color: var(--dark-blue); margin-bottom: 12px; }
         
         .pay-option-grid { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 10px; }
         .pay-option-btn { background: var(--dark-blue); color: white; border: none; padding: 12px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; box-shadow: 0 3px 10px rgba(0,32,96,0.2); }
-        .pay-option-btn.secondary { background: #f1f5f9; color: var(--text-main); border: 1px solid #cbd5e1; box-shadow: none; }
-
-        .payment-proof-card { background: #f0fdf4; border: 1.5px dashed #4ade80; padding: 10px; border-radius: 8px; margin-top: 8px; text-align: center; }
-        .payment-proof-card input[type="file"] { margin-top: 5px; font-size: 10px; width: 100%; }
 
         .clickable-link-card { background: #f0fdf4; border: 1px solid #86efac; padding: 10px; border-radius: 8px; margin-top: 8px; word-break: break-all; text-align: center; }
         .clickable-link-card a { color: #15803d; font-weight: 700; font-size: 10px; text-decoration: underline; display: block; margin-bottom: 6px; background: white; padding: 6px; border-radius: 5px; border: 1px solid #bbf7d0; }
@@ -225,7 +220,6 @@
 <div id="appToast" class="no-print">✅ Saved Successfully!</div>
 
 <div class="app-shell no-print">
-    <!-- Enterprise Brand Header -->
     <div class="enterprise-header">
         <div class="brand-box" onclick="handleSecretLogoTap()">
             <div class="brand-logo-icon">₹</div>
@@ -245,14 +239,12 @@
         </div>
     </div>
 
-    <!-- Persistent Database Bar (Officer Only) -->
     <div class="db-status-bar officer-only" id="topDbBar" style="display: none;">
         <span>🗄️ DB (<span id="topBarCount">1</span>):</span>
         <select id="quickCustomerSelect" onchange="selectCustomerFromMemory(parseInt(this.value))"></select>
         <button class="sm-btn success" style="padding: 3px 6px;" onclick="openNewCustomerModal()">+ Add New</button>
     </div>
 
-    <!-- Bajaj Style Sub-Navbar Tabs -->
     <div class="bajaj-sub-nav customer-only">
         <div class="bajaj-tab active" onclick="switchBajajTab('overview', this)">Overview</div>
         <div class="bajaj-tab" onclick="switchBajajTab('documents', this)">Documents & Statements</div>
@@ -260,9 +252,7 @@
         <div class="bajaj-tab" onclick="switchBajajTab('details', this)">Loan Details</div>
     </div>
 
-    <!-- SCREEN 1: OFFICER ADMIN, MEMORY DB & DATA ENTRY WORKSPACE -->
     <div id="screenSetup" class="screen officer-only">
-        
         <div class="card">
             <div class="card-title">
                 <span>🗄️ 1. Customer Memory Database (<span id="memCount">0</span> Saved)</span>
@@ -445,7 +435,7 @@
                 <div class="product-title" id="bajajProductTitle">PERSONAL LOAN - BDFL</div>
                 <span class="status-pill-active" id="dashAccountStatusPill">Active</span>
             </div>
-            <div class="loan-ac-text">Loan account number: <strong id="dashLoanId">BDFL-LOAN-001</strong></div>
+            <div class="loan-ac-text">Loan account number: <strong id="dashLoanId">BDFL-LN-001</strong></div>
             
             <div class="next-due-alert" id="nextDueAlertBox">
                 <span>⚠️</span> <span id="nextDueAlertText">Next EMI due in 16 days: ₹1,568</span>
@@ -454,11 +444,11 @@
             <!-- Loan Progress Bar -->
             <div class="loan-progress-container">
                 <div class="loan-progress-bar">
-                    <div class="loan-progress-fill" id="loanProgressFill" style="width: 45%;"></div>
+                    <div class="loan-progress-fill" id="loanProgressFill" style="width: 0%;"></div>
                 </div>
                 <div class="loan-progress-labels">
-                    <span>Paid: <strong id="progPaidAmt">₹7,500</strong></span>
-                    <span>Remaining: <strong id="progRemainAmt">₹10,500</strong></span>
+                    <span>Paid: <strong id="progPaidAmt">₹0</strong></span>
+                    <span>Remaining: <strong id="progRemainAmt">₹0</strong></span>
                 </div>
             </div>
 
@@ -477,7 +467,7 @@
                 </div>
                 <div class="loan-meta-item" style="text-align: right; margin-top: 6px;">
                     <p>EMIs paid / pending</p>
-                    <h4 id="metaEmisCount">3 paid / 5 pending</h4>
+                    <h4 id="metaEmisCount">0 paid / 8 pending</h4>
                 </div>
             </div>
         </div>
@@ -638,7 +628,7 @@
                 </label>
             </div>
 
-            <!-- CLEAN PAYMENT METHOD SELECTOR (NO DYNAMIC QR) -->
+            <!-- CLEAN PAYMENT METHOD SELECTOR -->
             <div class="payment-method-section">
                 <div class="payment-method-title">⚡ Select Payment Method</div>
                 
@@ -955,11 +945,6 @@
     <div style="display: flex; justify-content: space-around; align-items: center; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; margin-bottom: 14px; text-align: center;">
         <div>
             <strong style="font-size: 10.5px; color: #002060; display: block; margin-bottom: 3px;">1. Scan to Pay via UPI</strong>
-            <img id="printUpiQrImg" src="" style="width: 95px; height: 95px; border: 1px solid #cbd5e1; padding: 3px; background: white;">
-            <div style="font-size: 9.5px; color: #475569; margin-top: 2px;">UPI ID: <span id="printUpiId">Q064772617@ybl</span></div>
-        </div>
-        <div>
-            <strong style="font-size: 10.5px; color: #15803d; display: block; margin-bottom: 3px;">2. Scan to Open Online Notice Link</strong>
             <img id="printPortalLinkQrImg" src="" style="width: 95px; height: 95px; border: 1px solid #22c55e; padding: 3px; background: white;">
             <div style="font-size: 9.5px; color: #475569; margin-top: 2px;">Opens Live Customer Portal</div>
         </div>
@@ -1028,10 +1013,10 @@
 </div>
 
 <script>
-    const STORAGE_KEY_DB = "BDFL_ENTERPRISE_CUSTOMERS_V33";
-    const STORAGE_KEY_CFG = "BDFL_ENTERPRISE_CONFIG_V33";
-    const STORAGE_KEY_LOCK = "BDFL_CUSTOMER_LOCK_V33";
-    const STORAGE_KEY_FIRST_LINK = "BDFL_FIRST_LINK_PAYLOAD_V33";
+    const STORAGE_KEY_DB = "BDFL_ENTERPRISE_CUSTOMERS_V34";
+    const STORAGE_KEY_CFG = "BDFL_ENTERPRISE_CONFIG_V34";
+    const STORAGE_KEY_LOCK = "BDFL_CUSTOMER_LOCK_V34";
+    const STORAGE_KEY_FIRST_LINK = "BDFL_FIRST_LINK_PAYLOAD_V34";
     const CIPHER_SECRET_KEY = "BDFL#2026$CHANDAN@9733322375!KEY";
     const DEFAULT_COMPANY_MOBILE = "9733322375";
     const DEFAULT_UPI_ID = "Q064772617@ybl";
@@ -1119,7 +1104,7 @@
         setTimeout(() => t.classList.remove('show'), 2500);
     }
 
-    function getCleanEmptyCustomer(customName = "NEW CUSTOMER", emiVal = 1568, totalMonths = 8, agent = "Chandan Das", lType = "Monthly") {
+    function getCleanEmptyCustomer(customName = "SAHIL AKTHAR", emiVal = 1568, totalMonths = 8, agent = "Chandan Das", lType = "Monthly") {
         const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         const rows = [];
         let baseDate = new Date(); 
@@ -1130,19 +1115,24 @@
             else d.setMonth(d.getMonth() + i); 
 
             let dateStr = `${d.getDate()} ${monthNames[d.getMonth()]}${String(d.getFullYear()).slice(-2)}`;
+            // By default make first 3 collected for demo balance matching screenshot
+            let st = i < 3 ? "Collected" : (i === 3 ? "Bounce" : "Scheduled");
+            let colDt = i < 3 ? dateStr : (i === 3 ? "In Progress (Bounce)" : "Scheduled");
+            let utrStr = i < 3 ? `HDFCH01${Math.floor(100000+Math.random()*900000)}` : (i === 3 ? "Overdue + Fine" : "-");
+
             rows.push({
                 no: i + 1,
                 date: dateStr,
-                status: i === 0 ? "Bounce" : "Scheduled",
-                collectedDate: i === 0 ? "In Progress (Bounce)" : "Scheduled",
-                utr: i === 0 ? "Overdue + Fine" : "-",
+                status: st,
+                collectedDate: colDt,
+                utr: utrStr,
                 amount: emiVal
             });
         }
         return {
             id: "cust_" + Date.now() + "_" + Math.floor(Math.random()*1000),
             name: customName,
-            loanId: "BDFL-LN-" + Math.floor(10000 + Math.random() * 90000),
+            loanId: "BDFL-LN-52706",
             phone: "+91 9800000000",
             address: "Harishchandrapur, Malda - 732125",
             agentName: agent,
@@ -1316,7 +1306,7 @@
             try { customersDB = JSON.parse(savedDb); } catch(e){}
         }
         if (!Array.isArray(customersDB) || customersDB.length === 0) {
-            customersDB = []; 
+            customersDB = [getCleanEmptyCustomer("SAHIL AKTHAR", 1568, 8, "Chandan Das", "Monthly")]; 
         }
         applySystemBranding();
     }
@@ -1819,7 +1809,6 @@
         document.getElementById('zoomQrModal').style.display = 'none';
     }
 
-    /* Pay Now Action with Direct App Chooser Popup */
     function triggerUpiPaymentApp() {
         if(customersDB.length === 0) return;
         const c = getActiveCustomer();
@@ -1837,7 +1826,6 @@
         document.getElementById('appLinkPaytm').href = `paytmmp://pay?pa=${systemConfig.upiId}&pn=${encodeURIComponent(systemConfig.brandTitle)}&am=${finalAmt}.00&cu=INR&tn=${encodeURIComponent(paymentNote)}`;
         document.getElementById('appLinkBhim').href = upiUri;
 
-        // Open app chooser modal
         document.getElementById('upiAppChooserModal').style.display = 'flex';
     }
 
@@ -1939,10 +1927,11 @@
         document.getElementById('accCoName').textContent = c.name;
         document.getElementById('accBankUpi').textContent = systemConfig.upiId;
 
-        const totalSanctioned = c.installments.reduce((sum, i) => sum + (parseFloat(i.amount) || 0), 0);
+        // Dynamic Correct Calculations for Total, Paid and Remaining
+        const totalSanctioned = c.installments.reduce((sum, i) => sum + (parseFloat(i.amount) || c.emi), 0);
         const totalCollected = c.installments
             .filter(i => i.status === 'Collected')
-            .reduce((sum, i) => sum + (parseFloat(i.amount) || 0), 0);
+            .reduce((sum, i) => sum + (parseFloat(i.amount) || c.emi), 0);
         const remainingAmt = Math.max(0, totalSanctioned - totalCollected);
         const paidEmisCount = c.installments.filter(i => i.status === 'Collected').length;
         const pendingEmisCount = c.installments.length - paidEmisCount;
@@ -1954,8 +1943,10 @@
 
         document.getElementById('progPaidAmt').textContent = `₹${totalCollected.toLocaleString('en-IN')}`;
         document.getElementById('progRemainAmt').textContent = `₹${remainingAmt.toLocaleString('en-IN')}`;
-        const pct = totalSanctioned > 0 ? Math.round((totalCollected / totalSanctioned) * 100) : 0;
+        
+        const pct = totalSanctioned > 0 ? Math.min(100, Math.round((totalCollected / totalSanctioned) * 100)) : 0;
         document.getElementById('loanProgressFill').style.width = pct + '%';
+        
         document.getElementById('metaTenure').textContent = `${c.installments.length} months`;
         document.getElementById('metaEmisCount').textContent = `${paidEmisCount} paid / ${pendingEmisCount} pending`;
 
@@ -1985,7 +1976,7 @@
                     </div>
                 </div>
                 <div class="inst-right">
-                    <div class="amount">₹${(parseFloat(inst.amount)||0).toLocaleString('en-IN')}</div>
+                    <div class="amount">₹${(parseFloat(inst.amount)||c.emi).toLocaleString('en-IN')}</div>
                     ${utrText ? `<div class="utr">${utrText}</div>` : ''}
                     ${!isPaid ? `<button class="quick-pay-btn officer-only" onclick="openMarkPaymentModal(${idx})">Mark Paid</button>` : ''}
                 </div>
@@ -2062,10 +2053,13 @@
             document.getElementById('breakdownTotal').textContent = `₹${customPayOverride.toFixed(2)}`;
         }
 
+        const finalPayableAmt = Math.max(minimumPayable, customPayOverride);
+        
         document.getElementById('dashUpiIdText').textContent = systemConfig.upiId;
+        document.getElementById('upiBtnAmountText').textContent = `₹${finalPayableAmt.toLocaleString('en-IN')}`;
 
         const portalLinkUrl = buildCustomerPortalUrl();
-        const linkQrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(portalLinkUrl)}`;
+        const linkQrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(portalUrl)}`;
         const dashLinkQr = document.getElementById('dashPortalLinkQrImg');
         if (dashLinkQr) dashLinkQr.src = linkQrApiUrl;
 
